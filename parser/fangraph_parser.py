@@ -18,6 +18,7 @@ class fangraphs_parser:
             
             self.season[0] = str(opt['season'][0])
             self.season[1] = str(opt['season'][1])
+        # batter or pitcher
         self.type = opt['type']
         # options:
         # position, file path, etc (tbd)
@@ -30,6 +31,8 @@ class fangraphs_parser:
         else:
             self.fp = []
         # initialize DB
+        # DB structure
+        # [season] -> [each files] -> [each line]
         self.db = []        
 
     # fileList
@@ -53,14 +56,12 @@ class fangraphs_parser:
     def getBackground(self):
         return self.bgknow
 
-    # read file
+    # read file (return array of full files)
     def fReader(self):
-        # if there is no file, return error
+        # if there is no file, set file list
         if len(self.fp)==0:
-            print 'you should set file first!'
-            return
-        # initialize DB
-        self.db = []
+            self.setFileList()
+        data =[]
         for i in range(len(self.fp)):
             templi = []
             for j in range(len(self.fp[i])):
@@ -82,7 +83,8 @@ class fangraphs_parser:
                     # parsing string into data
                     oneDB.append(self.lParser(line,field))
                 templi.append(oneDB)
-            self.db.append(templi)
+            data.append(templi)
+        return data
 
     # field parser
     def fParser(self,fieldline):
