@@ -10,14 +10,13 @@ class fangraphs_parser:
         # option (dictionary) contains
         # mandatory:
         # season, batter/pitcher
-        self.season = [0,0]
+        self.season = []
         if len(opt['season'])==1:
-            self.season[0] = str(opt['season'])
-            self.season[1] = str(opt['season'])
-        else:
-            
-            self.season[0] = str(opt['season'][0])
-            self.season[1] = str(opt['season'][1])
+            self.season.append(str(opt['season'][0]))
+            #self.season[1] = str(opt['season'])
+        else:            
+            self.season.append(str(opt['season'][0]))
+            self.season.append(str(opt['season'][1]))
         # batter or pitcher
         self.type = opt['type']
         # options:
@@ -33,7 +32,11 @@ class fangraphs_parser:
         # initialize DB
         # DB structure
         # [season] -> [each files] -> [each line]
-        self.db = []        
+        self.db = []
+
+    # option handler
+    def optHander(self):
+        return ''
 
     # fileList
     def setFileList(self):
@@ -74,6 +77,7 @@ class fangraphs_parser:
                 # header (field)
                 fieldline = reader.readline()
                 fieldline = fieldline.strip('\n')
+                fieldline = fieldline.strip('"')
                 [field,ftype] = self.fParser(fieldline)
                 oneDB.append(field)
                 for line in reader:
@@ -118,6 +122,93 @@ class fangraphs_parser:
         # error find (later)
         return tline
 
+    # csv join
+    def join(self):
+        # raw data
+        raw_data = self.fReader()
+        self.db = []
+        for i in range(len(raw_data)):
+            # get joined data by year
+            joined = self.join1year(raw_data[i])
+            # season info
+            sInfo = self.season[i]
+            # each data
+            for player in joined:
+                # add season data
+                player['season'] = sInfo
+                # check if player is in the dictionary or not
+                check = 0
+                for j in range(len(self.db)):
+                    if self.db[j]['playerid']==player['playerid']:
+                        del player['playerid']
+                        self.db[j]['data'].append(player)
+                        check = 1
+                        break
+                if check==0:
+                    tempdic = dict()
+                    tempdic['playerid'] = player['playerid']
+                    del player['playerid']
+                    tempdic['data'] = [player]
+                    self.db.append(tempdic)
+                
+    # join for same year data
+    def join1year(self,data):
+        merged = []
+        key = 'playerid'
+        ididx = []
+        # merge
+        tmpheader = []
+        # merge header & find index of key
+        for i in range(len(data)):
+            if key in data[i][0]:
+                ididx.append(data[i][0].index(key))
+                tmpheader = tmpheader + data[i][0]
+            else:
+                print data[i][0]
+                ididx.append(-1)
+        merged.append(tmpheader)
+        # merge data
+        for i in range(1,len(data[0])):
+            curKey = data[0][i][ididx[0]]
+            curData = data[0][i]
+            # find matched data
+            for j in range(1,len(data)):
+                if ididx[j]==-1:
+                    continue
+                check = 0
+                for k in range(1,len(data[j])):
+                    if data[j][k][ididx[j]]==curKey:
+                        curData = curData+data[j][k]
+                        check = 1
+                        break
+                if check==0:
+                    junkli = []
+                    for k in range(len(data[j][0])):
+                        junkli.append('')
+                    curData = curData+junkli
+            merged.append(curData)
+        # remove redundant fields
+        # find redundant indices
+        newidx = []
+        badidx = []
+        for i in range(len(merged[0])):
+            if merged[0][i] in newidx:
+                badidx.append(i)
+                continue
+            newidx.append(merged[0][i])
+        # remove redundant indecs
+        final = []
+        for i in range(len(merged)):
+            for j in range(len(badidx)):
+                del merged[i][badidx[j]-j]
+            if i==0:
+                continue
+            #temptuple = zip(merged[0],merged[i])
+            final.append(dict(zip(merged[0],merged[i])))
+        return final
+        
+
     # get database
     def getDB(self):
+        self.join()
         return self.db
