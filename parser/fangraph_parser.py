@@ -15,8 +15,9 @@ class fangraphs_parser:
             self.season.append(str(opt['season'][0]))
             #self.season[1] = str(opt['season'])
         else:            
-            self.season.append(str(opt['season'][0]))
-            self.season.append(str(opt['season'][1]))
+            self.season = range(opt['season'][0],opt['season'][1])
+            for i in range(len(self.season)):
+                self.season[i] = str(self.season[i])
         # batter or pitcher
         self.type = opt['type']
         # options:
