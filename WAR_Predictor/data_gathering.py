@@ -10,7 +10,7 @@ class dataExport:
         self.wData = self.fparser.getDB()
 
     def getStat(self,stat):
-        print len(self.wData[0]['data'])
+        #print len(self.wData[0]['data'])
         for i in range(len(self.wData)):
             mm = self.wData[i]['data']
             newData = {'playerid':self.wData[i]['playerid'],'Name':mm[0]['Name'],'data':[]}
