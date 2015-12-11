@@ -1,6 +1,3 @@
-import os,sys
-import math
-
 def getSeasonInterval(dic):
     minSeason = 1000000
     maxSeason = 0
@@ -11,7 +8,7 @@ def getSeasonInterval(dic):
             maxSeason = int(dic[i]['season'])
     return [minSeason,maxSeason]
 
-def DictoList(dic):
+'''def DictoList(dic):
     nos = len(dic[0])-1
     [minSeason,maxSeason] = getSeasonInterval(dic)
     li = []
@@ -28,7 +25,7 @@ def DictoList(dic):
                 continue
             li[int(dic[i]['season'])-minSeason][jj] = dic[i][keyset[j]]
             jj+=1
-    return li
+    return li'''
 
 def DictoList(dic,seasonInterval):
     nos = len(dic[0])-1
@@ -40,11 +37,14 @@ def DictoList(dic,seasonInterval):
         for i in range(len(templi)):
             templi[i]=0
         li.append(templi)
+    #print [minSeason,maxSeason]
     keyset = dic[0].keys()
     for i in range(len(dic)):
         jj = 0
         for j in range(len(keyset)):
             if keyset[j]=='season':
+                continue
+            if int(dic[i]['season'])-minSeason>=len(li):
                 continue
             li[int(dic[i]['season'])-minSeason][jj] = dic[i][keyset[j]]
             jj+=1
