@@ -1,3 +1,4 @@
+## utility functions for WAR predictor
 def getSeasonInterval(dic):
     minSeason = 1000000
     maxSeason = 0

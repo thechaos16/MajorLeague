@@ -2,13 +2,30 @@ import os,sys
 import numpy as np
 import sim_check as si
 import WAR_utils as wu
+import data_splitter as ds
 
+## WAR predictor (training model)
 class WAR_train:
+    ## initialize
+    ## param should be specified
     def __init__(self,data,alg,param):
         self.wData = data
         self.alg = alg
         self.param = param
-        
+    
+    ## modules for splitting data
+    def splitData(self,opt):
+        self.train = []
+        self.test = []
+        splitter = ds.splitData(self.wData,opt)
+        testIdx = splitter.getIdx()
+        for i in range(len(self.wData)):
+            if i in testIdx:
+                self.test.append(self.wData)
+            else:
+                self.train.append(self.wData)
+    
+    ## training model by similarity check
     def bySimCheck(self,train,test):
         sInterval = self.param['season']
         ## checking sim
@@ -31,5 +48,9 @@ class WAR_train:
             res/=errsum
             predRes.append(res)
         return predRes
+    
+    def byRegression(self,train,test):
+        return 0
         
-        
+    def byCRF(self,trian,test):
+        return 0

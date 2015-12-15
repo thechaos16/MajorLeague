@@ -15,4 +15,8 @@ def MSE(a,b):
     ans = map(lambda x:x/len(a),ans)
     return ans
 
-## 
+## MSE for different length
+## a should be shorter than b
+def MSEWithDiffLength(a,b):
+    ans = []
+    return ans

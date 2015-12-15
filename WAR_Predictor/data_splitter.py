@@ -21,3 +21,6 @@ class splitData:
     def splitByMethod(self):
         if self.opt['method'].lower()=='random':
             return self.splitRandom()
+            
+    def getIdx(self):
+        return self.splitByMethod()
