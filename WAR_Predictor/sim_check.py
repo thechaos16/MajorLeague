@@ -12,7 +12,7 @@ def MSE(a,b):
         for j in range(len(a[i])):
             diff = a[i][j]-b[i][j]
             ans[j]+=diff*diff
-    ans = map(lambda x:x/len(a),ans)
+    ans = list(map(lambda x:x/len(a),ans))
     return ans
 
 ## MSE for different length

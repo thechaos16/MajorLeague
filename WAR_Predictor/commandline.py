@@ -10,8 +10,9 @@ mm = aa.getDB()
 newTR = tr.WAR_train(mm,'asdf',{'season':[2006,2015]})
 
 ## manual splitter
-tt = newTR.wData[1:len(newTR.wData)*2/3]
-ttest = newTR.wData[len(newTR.wData)*2/3:-1]
+testIdx = int(len(newTR.wData)*2/3)
+tt = newTR.wData[1:testIdx]
+ttest = newTR.wData[testIdx:-1]
 
 kk = newTR.bySimCheck(tt,ttest)
 

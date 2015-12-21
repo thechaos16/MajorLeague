@@ -17,7 +17,7 @@ class Regressor:
     def run(self):
         if self.alg.lower()=='elastic':
             ## validity checker
-            runElastic(self.train,self.test)
+            self.runElastic(self.train,self.test)
     
     def runElastic(self,train,test):
         return 0

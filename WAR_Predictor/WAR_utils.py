@@ -1,3 +1,5 @@
+import numpy as np
+
 ## utility functions for WAR predictor
 def getSeasonInterval(dic):
     minSeason = 1000000
@@ -34,12 +36,12 @@ def DictoList(dic,seasonInterval):
     maxSeason = seasonInterval[1]
     li = []
     for j in range(maxSeason-minSeason+1):
-        templi = range(nos)
+        templi = np.linspace(0,nos-1,nos)
         for i in range(len(templi)):
             templi[i]=0
         li.append(templi)
     #print [minSeason,maxSeason]
-    keyset = dic[0].keys()
+    keyset = list(dic[0])
     for i in range(len(dic)):
         jj = 0
         for j in range(len(keyset)):

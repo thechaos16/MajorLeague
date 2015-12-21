@@ -1,6 +1,5 @@
 import os,sys
-import math
-import random
+import numpy as np
 import utils
 
 # class for fangraph csv parser
@@ -15,9 +14,9 @@ class fangraphs_parser:
             self.season.append(str(opt['season'][0]))
             #self.season[1] = str(opt['season'])
         else:            
-            self.season = range(opt['season'][0],(opt['season'][1]+1))
+            self.season = np.linspace(opt['season'][0],opt['season'][1],opt['season'][1]-opt['season'][0]+1)
             for i in range(len(self.season)):
-                self.season[i] = str(self.season[i])
+                self.season[i] = np.uint(self.season[i])
         # batter or pitcher
         self.type = opt['type']
         # options:
@@ -43,7 +42,7 @@ class fangraphs_parser:
     def setFileList(self):
         for i in range(len(self.season)):
             templi = []
-            fpath = '../data/fangraphs/'+self.season[i]+'/'+self.type
+            fpath = '../data/fangraphs/'+str(np.uint(self.season[i]))+'/'+self.type
             contents = os.listdir(fpath)
             for j in range(len(contents)):
                 templi.append(fpath+'/'+contents[j])
@@ -70,9 +69,9 @@ class fangraphs_parser:
             templi = []
             for j in range(len(self.fp[i])):
                 if not os.path.isfile(self.fp[i][j]):
-                    print self.fp[i][j]+' does not exist!'
+                    print(self.fp[i][j]+' does not exist!')
                     continue
-                reader = open(self.fp[i][j],'r')
+                reader = open(self.fp[i][j],'r',encoding='utf-8')
                 # read line by line
                 oneDB = []
                 # header (field)
@@ -105,7 +104,6 @@ class fangraphs_parser:
         # requirements:
         # type controller (e.g. 33.5% -> 0.335)
         # error finder (if integer in name, return error)
-        lineDB = []
         tline = line.split('","')
         # consistency check
         ccheck = len(tline)==len(field)
@@ -165,7 +163,7 @@ class fangraphs_parser:
                 ididx.append(data[i][0].index(key))
                 tmpheader = tmpheader + data[i][0]
             else:
-                print data[i][0]
+                print(data[i][0])
                 ididx.append(-1)
         merged.append(tmpheader)
         # merge data
