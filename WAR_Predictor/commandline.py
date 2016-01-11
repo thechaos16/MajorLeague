@@ -1,5 +1,6 @@
 import data_gathering as dg
 import training as tr
+import numpy as np
 #import WAR_utils as wu
 #import sim_check as si
 
@@ -16,7 +17,7 @@ ttest = newTR.wData[testIdx:-1]
 
 kk = newTR.bySimCheck(tt,ttest)
 
-
+print(np.mean(kk))
 
 
 #li1 = wu.DictoList(mm[0]['data'],[2008,2015])

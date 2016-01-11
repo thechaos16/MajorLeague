@@ -39,8 +39,9 @@ class WAR_train:
             errsum = 0.0
             for j in range(len(train)):
                 newtrain = wu.DictoList(train[j]['data'],sInterval)
-                ## this is only for current one. err should be array afterwards                
-                err = si.MSE(newtest,newtrain[0:-1])[0]
+                ## this is only for current one. err should be array afterwards
+                sii = si.simCheck(newtest,newtrain[0:-1])
+                err = sii.MSE()[0]
                 if err==0:
                     err = 0.00001
                 res+=(newtrain[-1][0]/err)
