@@ -41,14 +41,18 @@ class simCheck:
                 
     ## Kullback-Leibler distance
     def KLDivergence(self):
-        ## vector normalization
-        normVec1 = self.vec1/np.sum(self.vec1)
-        normVec2 = self.vec2/np.sum(self.vec2)
-        ## kl-distance
-        klList = [(normVec1[elm]-normVec2[elm])*np.log10(normVec1[elm]/normVec2[elm]) for elm in range(len(normVec1)) if normVec1[elm]!=0 and normVec2[elm]!=0]
-        if len(klList)==0:
-            return np.nan
-        return np.sum(klList)
+        res = []
+        for i in range(len(self.vec1[0])):
+            ## vector normalization
+            normVec1 = self.vec1/np.sum(self.vec1)
+            normVec2 = self.vec2/np.sum(self.vec2)
+            ## kl-distance
+            klList = [(normVec1[elm]-normVec2[elm])*np.log10(normVec1[elm]/normVec2[elm]) for elm in range(len(normVec1)) if normVec1[elm]!=0 and normVec2[elm]!=0]
+            if len(klList)==0:
+                res.append(np.nan)
+            else:
+                res.append(np.sum(klList))
+        return res
         
     ## smoothing
     def smooth(self,data,kernelSize = 5):
@@ -72,5 +76,5 @@ class simCheck:
 if __name__=='__main__':
     testSig1 = [[1],[2],[1],[2],[1],[2],[1],[2]]
     testSig2 = [[2],[1],[2],[1],[2],[1],[2],[1]]
-    sim = simCheck(testSig1,testSig2)
+    sim = simCheck(testSig1,testSig2,'kl')
     aaa = sim.runByOption()
