@@ -49,7 +49,7 @@ def DictoList(dic,seasonInterval):
         for j in range(len(keyset)):
             if keyset[j]=='season':
                 continue
-            if int(dic[i]['season'])-minSeason>=len(li):
+            if int(dic[i]['season'])-minSeason>=len(li) or int(dic[i]['season'])-minSeason<0:
                 continue
             li[int(dic[i]['season'])-minSeason][jj] = dic[i][keyset[j]]
             jj+=1

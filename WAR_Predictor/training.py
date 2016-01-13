@@ -1,8 +1,9 @@
-import os,sys
 import numpy as np
+import scipy
 import sim_check as si
 import WAR_utils as wu
 import data_splitter as ds
+import linRegression as rg
 
 ## WAR predictor (training model)
 class WAR_train:
@@ -51,7 +52,24 @@ class WAR_train:
         return predRes
     
     def byRegression(self,train,test):
-        return 0
+        sInterval = self.param['season']
+        ## checking sim
+        predRes = []
+        inputSeason = [sInterval[0],sInterval[1]-1]
+        outputSeason = [sInterval[1],sInterval[1]]
+        trainInput = []
+        trainOutput = []
+        for i in range(len(train)):
+            trainInput.append([elm[0] for elm in wu.DictoList(train[i]['data'],inputSeason)])
+            trainOutput.append(wu.DictoList(train[i]['data'],outputSeason)[0])
+        print(np.array(trainInput).shape)
+        print(np.array(trainOutput).shape)
+        rgIns = rg.Regressor(trainInput,trainOutput)
+        coeff = rgIns.run()
+        # season for test should be different (last season shouldn't be added)
+        #testSeason = [sInterval[0],sInterval[1]-1]
+        #newtest = wu.DictoList(test[i]['data'],testSeason)
+        return coeff
         
     def byCRF(self,trian,test):
         return 0
