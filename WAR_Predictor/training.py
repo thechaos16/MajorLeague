@@ -1,9 +1,9 @@
 import numpy as np
 import scipy
-import sim_check as si
-import WAR_utils as wu
-import data_splitter as ds
-import linRegression as rg
+import WAR_Predictor.sim_check as si
+import WAR_Predictor.WAR_utils as wu
+import WAR_Predictor.data_splitter as ds
+import WAR_Predictor.linRegression as rg
 
 ## WAR predictor (training model)
 class WAR_train:

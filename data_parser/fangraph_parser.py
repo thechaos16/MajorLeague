@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 import os,sys
 import numpy as np
-import utils
+import data_parser.utils as utils
 
 # class for fangraph csv parser
 class fangraphs_parser:

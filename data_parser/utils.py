@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # set of functions for any modules
 
 def isNumber(string):

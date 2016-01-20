@@ -1,4 +1,9 @@
-import fangraph_parser as fp
+# -*- coding: utf-8 -*-
+import sys
+
+sys.path.append('../')
+
+import data_parser.fangraph_parser as fp
 
 opt = {'season':[2006,2015],'type':'batter'}
 

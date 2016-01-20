@@ -1,6 +1,5 @@
-import os,sys
-sys.path.append('../parser')
-import fangraph_parser as fp
+# -*- coding: utf-8 -*-
+import data_parser.fangraph_parser as fp
 
 # this class exports data by name of stat
 # output format is {pid {season, stats}}
