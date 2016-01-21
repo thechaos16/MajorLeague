@@ -9,7 +9,7 @@ import unittest
 import sys
 import numpy as np
 sys.path.append('../')
-import WAR_utils as wu
+import WAR_Predictor.WAR_utils as wu
 
 class utilsTest(unittest.TestCase):
     nTest = 10

@@ -54,22 +54,28 @@ class WAR_train:
     def byRegression(self,train,test):
         sInterval = self.param['season']
         ## checking sim
-        predRes = []
-        inputSeason = [sInterval[0],sInterval[1]-1]
-        outputSeason = [sInterval[1],sInterval[1]]
-        trainInput = []
-        trainOutput = []
+        input_season = [sInterval[0],sInterval[1]-1]
+        output_season = [sInterval[1],sInterval[1]]
+        train_input = []
+        train_output = []
         for i in range(len(train)):
-            trainInput.append([elm[0] for elm in wu.DictoList(train[i]['data'],inputSeason)])
-            trainOutput.append(wu.DictoList(train[i]['data'],outputSeason)[0])
-        print(np.array(trainInput).shape)
-        print(np.array(trainOutput).shape)
-        rgIns = rg.Regressor(trainInput,trainOutput)
+            train_input.append([elm[0] for elm in wu.DictoList(train[i]['data'],input_season)])
+            train_output.append(wu.DictoList(train[i]['data'],output_season)[0])
+        #print(np.array(train_input).shape)
+        #print(np.array(train_output).shape)
+        rgIns = rg.Regressor(train_input,train_output)
         coeff = rgIns.run()
         # season for test should be different (last season shouldn't be added)
-        #testSeason = [sInterval[0],sInterval[1]-1]
-        #newtest = wu.DictoList(test[i]['data'],testSeason)
-        return coeff
+        test_input = []
+        test_output = []
+        for i in range(len(test)):
+            test_input.append([elm[0] for elm in wu.DictoList(test[i]['data'],input_season)])
+            test_output.append(wu.DictoList(test[i]['data'],output_season)[0])
+        
+        predict_output = rgIns.prediction(test_input,coeff[0])
+        mse = np.sqrt(np.mean((np.array(predict_output)-np.array(test_output))**2))
+        
+        return mse
         
     def byCRF(self,trian,test):
         return 0
