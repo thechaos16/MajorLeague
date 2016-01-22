@@ -12,15 +12,15 @@ aa = dg.dataExport({'season':[2006,2015],'type':'batter'})
 aa.getStat(['WAR'])
 mm = aa.getDB()
 
-newTR = tr.WAR_train(mm,'asdf',{'season':[2006,2015]})
+new_train = tr.WAR_Train(mm,'asdf',{'season':[2006,2015]})
 
 ## manual splitter
-testIdx = int(len(newTR.wData)*2/3)
-tt = newTR.wData[1:testIdx]
-ttest = newTR.wData[testIdx:-1]
+test_idx = int(len(new_train.w_data)*2/3)
+tt = new_train.w_data[1:test_idx]
+ttest = new_train.w_data[test_idx:-1]
 
-(prediction,evaluation) = newTR.byRegression(tt,ttest)
-#(prediction,evaluation) = newTR.bySimCheck(tt,ttest)
+(prediction,evaluation) = new_train.byRegression(tt,ttest)
+(prediction,evaluation) = newTR.bySimCheck(tt,ttest)
 
 #print(np.mean(kk))
 

@@ -1,26 +1,26 @@
 import random
 
-class splitData:
+class SplitData:
     ## option: {'method': 'random', 'ratio':0.7}
     def __init__(self,data,opt):
         self.data = data
         self.opt = opt
     
-    def splitRandom(self):
+    def split_random(self):
         ## random sampling
-        upLimit = max(self.data)
-        downLimit = min(self.data)
-        testIdx = []
+        up_limit = max(self.data)
+        down_limit = min(self.data)
+        test_idx = []
         while True:
-            randNum = random.randint(downLimit,upLimit)
-            if randNum not in testIdx:
-                testIdx.append(randNum)
-            if len(testIdx)>=self.opt['ratio']*len(self.data):
-                return testIdx
+            rand_num = random.randint(down_limit,up_limit)
+            if rand_num not in test_idx:
+                test_idx.append(rand_num)
+            if len(test_idx)>=self.opt['ratio']*len(self.data):
+                return test_idx
             
-    def splitByMethod(self):
+    def split_by_method(self):
         if self.opt['method'].lower()=='random':
-            return self.splitRandom()
+            return self.split_random()
             
-    def getIdx(self):
-        return self.splitByMethod()
+    def get_index(self):
+        return self.split_by_method()

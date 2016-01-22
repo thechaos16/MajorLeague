@@ -3,26 +3,26 @@ import sys
 import scipy.signal as sig
 import scipy as sc
    
-class simCheck:
+class SimCheck:
     def __init__(self,vec1,vec2,opt='mse'):
         ## smooth vectors
         self.vec1 = self.smooth(np.array(vec1))
         self.vec2 = self.smooth(np.array(vec2))
         self.opt = opt
         
-    def runByOption(self,opt=None):
+    def run_by_option(self,opt=None):
         if opt!=None:
             self.opt = opt
         if self.opt=='mse':
-            return self.MSE()
+            return self.mse()
         elif self.opt=='kl':
-            return self.KLDivergence()
+            return self.kl_divergence()
         else:
             sys.exit('Error!')
     
     ## same length, dic
     ## MSE
-    def MSE(self):
+    def mse(self):
         ans = []
         for i in range(len(self.vec1[0])):
             ans.append(0.0)
@@ -35,46 +35,48 @@ class simCheck:
         
     ## MSE for different length
     ## a should be shorter than b
-    def MSEWithDiffLength(self):
+    def mse_with_diff_length(self):
         ans = []
         return ans
                 
     ## Kullback-Leibler distance
-    def KLDivergence(self):
+    def kl_divergence(self):
         res = []
         for i in range(len(self.vec1[0])):
             ## vector normalization
-            normVec1 = self.vec1/np.sum(self.vec1)
-            normVec2 = self.vec2/np.sum(self.vec2)
+            norm_vec1 = self.vec1/np.sum(self.vec1)
+            norm_vec2 = self.vec2/np.sum(self.vec2)
             ## kl-distance
-            klList = [(normVec1[elm]-normVec2[elm])*np.log10(normVec1[elm]/normVec2[elm]) for elm in range(len(normVec1)) if normVec1[elm]!=0 and normVec2[elm]!=0]
-            if len(klList)==0:
+            kl_list = [(norm_vec1[elm]-norm_vec2[elm])*np.log10(norm_vec1[elm]/norm_vec2[elm]) for elm in range(len(norm_vec1)) if norm_vec1[elm]!=0 and norm_vec2[elm]!=0]
+            if len(kl_list)==0:
                 res.append(np.nan)
             else:
-                res.append(np.sum(klList))
+                res.append(np.sum(kl_list))
         return res
         
     ## smoothing
-    def smooth(self,data,kernelSize = 5):
-        transData = data.T
+    def smooth(self,data,kernel_size = 5):
+        trans_data = data.T
         for i in range(data.shape[1]):
             ## exception handler
-            if kernelSize%2==0:
-                kernelSize+=1
-            halfWindow = (kernelSize-1)/2
+            if kernel_size%2==0:
+                kernel_size+=1
+            half_window = (kernel_size-1)/2
             ## gaussian filter
-            gaussFilter = np.exp(-0.5*np.power([elm-(kernelSize-1)/2 for elm in range(kernelSize)],2))
-            smoothSignal = np.convolve(transData[i],gaussFilter)
-            smoothSignal = smoothSignal[halfWindow:-halfWindow]
+            gauss_filter = np.exp(-0.5*np.power([elm-(kernel_size-1)/2 for elm in range(kernel_size)],2))
+            smooth_signal = np.convolve(trans_data[i],gauss_filter)
+            smooth_signal = smooth_signal[half_window:-half_window]
             if i==0:
-                newData = np.array([smoothSignal])
+                new_data = np.array([smooth_signal])
             else:
-                newData = np.append([newData],smoothSignal)
-        return newData.T
+                new_data = np.append([new_data],smooth_signal)
+        return new_data.T
+        
+    
         
 ## test
 if __name__=='__main__':
-    testSig1 = [[1],[2],[1],[2],[1],[2],[1],[2]]
-    testSig2 = [[2],[1],[2],[1],[2],[1],[2],[1]]
-    sim = simCheck(testSig1,testSig2,'kl')
-    aaa = sim.runByOption()
+    test_sig1 = [[1],[2],[1],[2],[1],[2],[1],[2]]
+    test_sig2 = [[2],[1],[2],[1],[2],[1],[2],[1]]
+    sim = SimCheck(test_sig1,test_sig2,'kl')
+    aaa = sim.run_by_option()
