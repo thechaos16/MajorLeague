@@ -28,7 +28,7 @@ class WAR_Train:
                 self.train.append(self.w_data)
     
     ## training model by similarity check
-    def bySimCheck(self,train,test):
+    def by_sim_check(self,train,test):
         season_interval = self.param['season']
         ## checking sim
         pred_res = []
@@ -56,7 +56,7 @@ class WAR_Train:
         eval_res = self.evaluation(pred_res,ground_truth)
         return pred_res, eval_res
     
-    def byRegression(self,train,test):
+    def by_regression(self,train,test):
         season_interval = self.param['season']
         ## checking sim
         input_season = [season_interval[0],season_interval[1]-1]
@@ -81,7 +81,7 @@ class WAR_Train:
         eval_res = self.evaluation(predict_output,test_output)
         return predict_output, eval_res
         
-    def byCRF(self,trian,test):
+    def by_crf(self,trian,test):
         return 0
 
     def evaluation(self,prediction,ground_truth,opt=None):

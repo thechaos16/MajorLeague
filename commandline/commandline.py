@@ -8,9 +8,9 @@ import numpy as np
 #import WAR_utils as wu
 #import sim_check as si
 
-aa = dg.dataExport({'season':[2006,2015],'type':'batter'})
-aa.getStat(['WAR'])
-mm = aa.getDB()
+aa = dg.DataExport({'season':[2006,2015],'type':'batter'})
+aa.get_stat(['WAR'])
+mm = aa.get_db()
 
 new_train = tr.WAR_Train(mm,'asdf',{'season':[2006,2015]})
 
@@ -19,8 +19,8 @@ test_idx = int(len(new_train.w_data)*2/3)
 tt = new_train.w_data[1:test_idx]
 ttest = new_train.w_data[test_idx:-1]
 
-(prediction,evaluation) = new_train.byRegression(tt,ttest)
-(prediction,evaluation) = newTR.bySimCheck(tt,ttest)
+(prediction,evaluation) = new_train.by_regression(tt,ttest)
+(prediction,evaluation) = new_train.by_sim_check(tt,ttest)
 
 #print(np.mean(kk))
 

@@ -4,7 +4,7 @@ import numpy as np
 import data_parser.utils as utils
 
 # class for fangraph csv parser
-class fangraphs_parser:
+class FangraphParser:
     # constructor
     def __init__(self,opt):
         # option (dictionary) contains
@@ -36,38 +36,39 @@ class fangraphs_parser:
         self.db = []
 
     # option handler
-    def optHander(self):
+    def option_handler(self):
         return ''
 
     # fileList
-    def setFileList(self):
+    def set_file_list(self):
         for i in range(len(self.season)):
-            templi = []
-            fpath = '../data/fangraphs/'+str(np.uint(self.season[i]))+'/'+self.type
-            contents = os.listdir(fpath)
+            temp_list = []
+            file_path = '../data/fangraphs/'+str(np.uint(self.season[i]))+'/'+self.type
+            contents = os.listdir(file_path)
             for j in range(len(contents)):
-                templi.append(fpath+'/'+contents[j])
-            self.fp.append(templi)
-    def getFileList(self):
+                temp_list.append(file_path+'/'+contents[j])
+            self.fp.append(temp_list)
+            
+    def get_file_list(self):
         return self.fp
 
     # background knowledge (later)
-    def setBackground(self,t):
+    def set_background(self,t):
         if t == 'batter':
-            self.bgknow = []
+            self.background_knowledge = []
         elif t == 'pitcher':
-            self.bgknow = []
-    def getBackground(self):
-        return self.bgknow
+            self.background_knowledge = []
+    def get_background(self):
+        return self.background_knowledge
 
     # read file (return array of full files)
-    def fReader(self):
+    def file_reader(self):
         # if there is no file, set file list
         if len(self.fp)==0:
-            self.setFileList()
+            self.set_file_list()
         data =[]
         for i in range(len(self.fp)):
-            templi = []
+            temp_list = []
             for j in range(len(self.fp[i])):
                 if not os.path.isfile(self.fp[i][j]):
                     print(self.fp[i][j]+' does not exist!')
@@ -76,60 +77,60 @@ class fangraphs_parser:
                 # read line by line
                 oneDB = []
                 # header (field)
-                fieldline = reader.readline()
-                fieldline = fieldline.strip('\n')
-                fieldline = fieldline.strip('"')
-                [field,ftype] = self.fParser(fieldline)
+                field_line = reader.readline()
+                field_line = field_line.strip('\n')
+                field_line = field_line.strip('"')
+                [field,field_type] = self.field_parser(field_line)
                 oneDB.append(field)
                 for line in reader:
                     # remove '\n' & '"'
                     line = line.strip('\n')
                     line = line.strip('"')
                     # parsing string into data
-                    oneDB.append(self.lParser(line,field))
-                templi.append(oneDB)
-            data.append(templi)
+                    oneDB.append(self.line_parser(line,field))
+                temp_list.append(oneDB)
+            data.append(temp_list)
         return data
 
     # field parser
-    def fParser(self,fieldline):
-        ftype = []
-        tfield = fieldline.split('","')
-        tfield[0] = tfield[0].split('"')[1]
+    def field_parser(self,field_line):
+        field_type = []
+        field = field_line.split('","')
+        field[0] = field[0].split('"')[1]
         #for i in range(len(tfield)):
         #    bg = getBackground()            
-        return [tfield,ftype]
+        return [field,field_type]
     
     # line parser
-    def lParser(self,line,field):
+    def line_parser(self,line,field):
         # requirements:
         # type controller (e.g. 33.5% -> 0.335)
         # error finder (if integer in name, return error)
-        tline = line.split('","')
+        temp_line = line.split('","')
         # consistency check
-        ccheck = len(tline)==len(field)
+        ccheck = len(temp_line)==len(field)
         # modification
         for i in range(len(field)):
             if '%' in field[i]:
-                tline[i] = tline[i].strip('%')
-                if not utils.isNumber(tline[i]):
+                temp_line[i] = temp_line[i].strip('%')
+                if not utils.is_number(temp_line[i]):
                     continue
-                tline[i] = float(tline[i])/100.0
+                temp_line[i] = float(temp_line[i])/100.0
             else:
                 # convert string to float
-                if utils.isNumber(tline[i]):
-                    tline[i] = float(tline[i])
+                if utils.is_number(temp_line[i]):
+                    temp_line[i] = float(temp_line[i])
         # error find (later)
-        return tline
+        return temp_line
 
     # csv join
     def join(self):
         # raw data
-        raw_data = self.fReader()
+        raw_data = self.file_reader()
         self.db = []
         for i in range(len(raw_data)):
             # get joined data by year
-            joined = self.join1year(raw_data[i])
+            joined = self.join_one_year(raw_data[i])
             # season info
             sInfo = self.season[i]
             # each data
@@ -145,62 +146,62 @@ class fangraphs_parser:
                         check = 1
                         break
                 if check==0:
-                    tempdic = dict()
-                    tempdic['playerid'] = player['playerid']
+                    temp_dict = dict()
+                    temp_dict['playerid'] = player['playerid']
                     del player['playerid']
-                    tempdic['data'] = [player]
-                    self.db.append(tempdic)
+                    temp_dict['data'] = [player]
+                    self.db.append(temp_dict)
                 
     # join for same year data
-    def join1year(self,data):
+    def join_one_year(self,data):
         merged = []
         key = 'playerid'
-        ididx = []
+        id_idx = []
         # merge
-        tmpheader = []
+        temp_header = []
         # merge header & find index of key
         for i in range(len(data)):
             if key in data[i][0]:
-                ididx.append(data[i][0].index(key))
-                tmpheader = tmpheader + data[i][0]
+                id_idx.append(data[i][0].index(key))
+                temp_header = temp_header + data[i][0]
             else:
                 print(data[i][0])
-                ididx.append(-1)
-        merged.append(tmpheader)
+                id_idx.append(-1)
+        merged.append(temp_header)
         # merge data
         for i in range(1,len(data[0])):
-            curKey = data[0][i][ididx[0]]
-            curData = data[0][i]
+            current_key = data[0][i][id_idx[0]]
+            current_data = data[0][i]
             # find matched data
             for j in range(1,len(data)):
-                if ididx[j]==-1:
+                if id_idx[j]==-1:
                     continue
                 check = 0
                 for k in range(1,len(data[j])):
-                    if data[j][k][ididx[j]]==curKey:
-                        curData = curData+data[j][k]
+                    if data[j][k][id_idx[j]]==current_key:
+                        current_data = current_data+data[j][k]
                         check = 1
                         break
                 if check==0:
                     junkli = []
                     for k in range(len(data[j][0])):
                         junkli.append('')
-                    curData = curData+junkli
-            merged.append(curData)
+                    current_data = current_data+junkli
+            merged.append(current_data)
         # remove redundant fields
         # find redundant indices
-        newidx = []
-        badidx = []
+        new_idx = []
+        bad_idx = []
         for i in range(len(merged[0])):
-            if merged[0][i] in newidx:
-                badidx.append(i)
+            if merged[0][i] in new_idx:
+                bad_idx.append(i)
                 continue
-            newidx.append(merged[0][i])
+            new_idx.append(merged[0][i])
         # remove redundant indecs
         final = []
         for i in range(len(merged)):
-            for j in range(len(badidx)):
-                del merged[i][badidx[j]-j]
+            for j in range(len(bad_idx)):
+                del merged[i][bad_idx[j]-j]
             if i==0:
                 continue
             #temptuple = zip(merged[0],merged[i])
@@ -209,6 +210,6 @@ class fangraphs_parser:
         
 
     # get database
-    def getDB(self):
+    def get_db(self):
         self.join()
         return self.db
