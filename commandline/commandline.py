@@ -19,8 +19,8 @@ testIdx = int(len(newTR.wData)*2/3)
 tt = newTR.wData[1:testIdx]
 ttest = newTR.wData[testIdx:-1]
 
-kk = newTR.byRegression(tt,ttest)
-#kk = newTR.bySimCheck(tt,ttest)
+(prediction,evaluation) = newTR.byRegression(tt,ttest)
+#(prediction,evaluation) = newTR.bySimCheck(tt,ttest)
 
 #print(np.mean(kk))
 

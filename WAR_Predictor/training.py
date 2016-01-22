@@ -4,6 +4,7 @@ import WAR_Predictor.sim_check as si
 import WAR_Predictor.WAR_utils as wu
 import WAR_Predictor.data_splitter as ds
 import WAR_Predictor.linRegression as rg
+import WAR_Predictor.evaluation as ev
 
 ## WAR predictor (training model)
 class WAR_train:
@@ -30,12 +31,14 @@ class WAR_train:
     def bySimCheck(self,train,test):
         sInterval = self.param['season']
         ## checking sim
-        predRes = []
+        pred_res = []
+        ground_truth = []
         for i in range(len(test)):
             sInterval = self.param['season']
             # season for test should be different (last season shouldn't be added)
             testSeason = [sInterval[0],sInterval[1]-1]
             newtest = wu.DictoList(test[i]['data'],testSeason)
+            ground_truth.append(wu.DictoList(test[i]['data'],[sInterval[1],sInterval[1]])[0])
             res = 0.0
             errsum = 0.0
             for j in range(len(train)):
@@ -48,8 +51,10 @@ class WAR_train:
                 res+=(newtrain[-1][0]/err)
                 errsum+=1/err
             res/=errsum
-            predRes.append(res)
-        return predRes
+            pred_res.append(res)
+            
+        eval_res = self.evaluation(pred_res,ground_truth)
+        return pred_res, eval_res
     
     def byRegression(self,train,test):
         sInterval = self.param['season']
@@ -73,9 +78,12 @@ class WAR_train:
             test_output.append(wu.DictoList(test[i]['data'],output_season)[0])
         
         predict_output = rgIns.prediction(test_input,coeff[0])
-        mse = np.sqrt(np.mean((np.array(predict_output)-np.array(test_output))**2))
-        
-        return mse
+        eval_res = self.evaluation(predict_output,test_output)
+        return predict_output, eval_res
         
     def byCRF(self,trian,test):
         return 0
+
+    def evaluation(self,prediction,ground_truth,opt=None):
+        evi = ev.Evaluation(prediction,ground_truth,opt)
+        return evi.run_by_option()
