@@ -4,7 +4,7 @@ import scipy.signal as sig
 import scipy as sc
    
 class SimCheck:
-    def __init__(self,vec1,vec2,opt='mse'):
+    def __init__(self,vec1,vec2,opt='corr'):
         ## smooth vectors
         self.vec1 = self.smooth(np.array(vec1))
         self.vec2 = self.smooth(np.array(vec2))
@@ -17,6 +17,8 @@ class SimCheck:
             return self.mse()
         elif self.opt=='kl':
             return self.kl_divergence()
+        elif self.opt=='corr':
+            return self.correlation()
         else:
             sys.exit('Error!')
     
@@ -72,7 +74,12 @@ class SimCheck:
                 new_data = np.append([new_data],smooth_signal)
         return new_data.T
         
-    
+    ## correlation
+    def correlation(self):
+        inner_product = np.dot((self.vec1-np.mean(self.vec1)),(self.vec2-np.mean(self.vec2)))
+        vec1_norm = np.linalg.norm(self.vec1)
+        vec2_norm = np.linalg.norm(self.vec2)   
+        return inner_product/(vec1_norm*vec2_norm)
         
 ## test
 if __name__=='__main__':

@@ -7,6 +7,7 @@ Created on Tue Dec 15 23:37:05 2015
 
 import numpy as np
 import scipy
+import warnings
 from sklearn import linear_model
 
 ## Regressor
@@ -26,6 +27,11 @@ class Regressor:
         elif self.alg.lower()=='ridge':
             coeff = self.ridge_regression()
             return coeff
+        elif self.alg.lower()=='elastic':
+            coeff = self.ridge_regression()
+            return coeff
+        else:
+            warnings.warn('Other algorithm has not been implemented!')
     
     def linear_regression(self):
         clf = linear_model.LinearRegression()
@@ -35,6 +41,11 @@ class Regressor:
         
     def ridge_regression(self):
         clf = linear_model.Ridge()
+        clf.fit(self.inputVec,self.output)
+        return clf.coef_
+        
+    def elastic_net(self):
+        clf = linear_model.ElasticNet()
         clf.fit(self.inputVec,self.output)
         return clf.coef_
         
