@@ -1,10 +1,10 @@
 import numpy as np
 import scipy
-import WAR_Predictor.sim_check as si
-import WAR_Predictor.WAR_utils as wu
-import WAR_Predictor.data_splitter as ds
-import WAR_Predictor.linRegression as rg
-import WAR_Predictor.evaluation as ev
+import WAR_Predictor.matching_alg.sim_check as si
+import WAR_Predictor.python_utils.WAR_utils as wu
+import WAR_Predictor.data_handler.data_splitter as ds
+import WAR_Predictor.matching_alg.linRegression as rg
+import WAR_Predictor.training.evaluation as ev
 
 ## WAR predictor (training model)
 class WAR_Train:

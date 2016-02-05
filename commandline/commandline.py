@@ -2,8 +2,8 @@
 import sys
 sys.path.append('../')
 
-import WAR_Predictor.data_gathering as dg
-import WAR_Predictor.training as tr
+import WAR_Predictor.data_handler.data_gathering as dg
+import WAR_Predictor.training.training as tr
 import numpy as np
 #import WAR_utils as wu
 #import sim_check as si
