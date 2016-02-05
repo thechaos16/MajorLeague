@@ -8,11 +8,11 @@ import numpy as np
 #import WAR_utils as wu
 #import sim_check as si
 
-aa = dg.DataExport({'season':[2006,2015],'type':'batter'})
+aa = dg.DataExport({'season':[2011,2015],'type':'batter'})
 aa.get_stat(['WAR'])
 mm = aa.get_db()
 
-new_train = tr.WAR_Train(mm,'asdf',{'season':[2006,2015]})
+new_train = tr.WAR_Train(mm,'asdf',{'season':[2011,2015]})
 
 ## manual splitter
 test_idx = int(len(new_train.w_data)*2/3)

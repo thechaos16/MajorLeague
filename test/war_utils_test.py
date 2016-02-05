@@ -9,34 +9,34 @@ import unittest
 import sys
 import numpy as np
 sys.path.append('../')
-import WAR_Predictor.WAR_utils as wu
+import WAR_Predictor.python_utils.WAR_utils as wu
 
 class utilsTest(unittest.TestCase):
-    nTest = 10
-    def testsInterval(self):
-        for i in range(self.nTest):
-            leastInt = np.random.randint(1990,2020)
+    number_of_test = 10
+    def test_interval(self):
+        for i in range(self.number_of_test):
+            least_integer = np.random.randint(1990,2020)
             interval = np.random.randint(0,10)
-            sampleList = []
-            #print([leastInt, leastInt+interval-1])
+            sample_list = []
+            #print([least_integer, least_integer+interval-1])
             for j in range(interval):
-                sampleList.append({'season':leastInt+j})
+                sample_list.append({'season':least_integer+j})
             try:
-                res = wu.getSeasonInterval(sampleList)
+                res = wu.getSeasonInterval(sample_list)
             #print(res)
-                self.assertEqual(res,[leastInt, leastInt+interval-1])
+                self.assertEqual(res,[least_integer, least_integer+interval-1])
             except Exception:
                 pass
-    def testdictolist(self):
-        for i in range(self.nTest):
-            leastInt = np.random.randint(1990,2020)
+    def test_dict_to_list(self):
+        for i in range(self.number_of_test):
+            least_integer = np.random.randint(1990,2020)
             interval = np.random.randint(0,10)
-            sampleList = []
-            #print([leastInt, leastInt+interval-1])
+            sample_list = []
+            #print([least_integer, least_integer+interval-1])
             for j in range(interval):
-                sampleList.append({'season':leastInt+j,'testcase':j})
+                sample_list.append({'season':least_integer+j,'testcase':j})
             try:
-                targetDict = wu.DictoList(sampleList,[leastInt, leastInt+interval-1])
+                targetDict = wu.DictoList(sample_list,[least_integer, least_integer+interval-1])
                 print(targetDict)
             except Exception:
                 pass
