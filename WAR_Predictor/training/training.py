@@ -22,12 +22,14 @@ class WAR_Train:
         self.test = []
         splitter = ds.SplitData(self.w_data,opt)
         test_idx = splitter.get_index()
+        ## if not cross validation, split is only for once
         if type(test_idx[0]) is not list and type(test_idx[0]) is not np.ndarray:
             for i in range(len(self.w_data)):
                 if i in test_idx:
                     self.test.append(self.w_data)
                 else:
                     self.train.append(self.w_data)
+        ## for cross validation, return index list
         else:
             return test_idx
     
@@ -62,8 +64,8 @@ class WAR_Train:
             for j in range(len(train)):
                 train_list = wu.dict_to_list(train[j]['data'],season_interval)
                 ## this is only for current one. err should be array afterwards
-                sii = si.SimCheck(test_list,train_list[0:-1])
-                err = sii.mse()[0]
+                sii = si.SimCheck(test_list,train_list[0:-1],'corr')
+                err = sii.run_by_option()[0]
                 if err==0:
                     err = 0.00001
                 res+=(train_list[-1][0]/err)

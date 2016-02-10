@@ -35,12 +35,6 @@ class SimCheck:
         ans = list(map(lambda x:x/len(self.vec1),ans))
         return ans
         
-    ## MSE for different length
-    ## a should be shorter than b
-    def mse_with_diff_length(self):
-        ans = []
-        return ans
-                
     ## Kullback-Leibler distance
     def kl_divergence(self):
         res = []
@@ -76,14 +70,14 @@ class SimCheck:
         
     ## correlation
     def correlation(self):
-        inner_product = np.dot((self.vec1-np.mean(self.vec1)),(self.vec2-np.mean(self.vec2)))
+        inner_product = np.dot((self.vec1-np.mean(self.vec1))[0],(self.vec2-np.mean(self.vec2))[0])
         vec1_norm = np.linalg.norm(self.vec1)
         vec2_norm = np.linalg.norm(self.vec2)   
-        return inner_product/(vec1_norm*vec2_norm)
+        return [inner_product/(vec1_norm*vec2_norm)]
         
 ## test
 if __name__=='__main__':
     test_sig1 = [[1],[2],[1],[2],[1],[2],[1],[2]]
     test_sig2 = [[2],[1],[2],[1],[2],[1],[2],[1]]
-    sim = SimCheck(test_sig1,test_sig2,'kl')
+    sim = SimCheck(test_sig1,test_sig2,'corr')
     aaa = sim.run_by_option()
