@@ -19,8 +19,8 @@ test_idx = int(len(new_train.w_data)*2/3)
 tt = new_train.w_data[1:test_idx]
 ttest = new_train.w_data[test_idx:-1]
 
-(prediction,evaluation) = new_train.by_regression(tt,ttest)
-(prediction,evaluation) = new_train.by_sim_check(tt,ttest)
+#(prediction,evaluation) = new_train.by_regression(tt,ttest)
+(prediction,evaluation) = new_train.by_sim_check(tt,ttest,is_iter=True)
 
 #print(np.mean(kk))
 

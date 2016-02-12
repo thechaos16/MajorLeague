@@ -10,7 +10,7 @@ class SimCheck:
         self.vec2 = self.smooth(np.array(vec2))
         self.opt = opt
         
-    def run_by_option(self,opt=None):
+    def run(self,opt=None):
         if opt!=None:
             self.opt = opt
         if self.opt=='mse':
@@ -37,6 +37,12 @@ class SimCheck:
         
     ## Kullback-Leibler distance
     def kl_divergence(self):
+        ## before kl divergence, we should test validity
+        ## 1. if there is negative value
+        if (np.array(self.vec1)<0).any() or (np.array(self.vec2)<0).any():
+            raise ValueError('KL-divregence requries non-negative input!')
+        if np.sum(self.vec1)*np.sum(self.vec2)==0:
+            raise ValueError('all zero input should not be an input for KLD!')
         res = []
         for i in range(len(self.vec1[0])):
             ## vector normalization
@@ -44,6 +50,7 @@ class SimCheck:
             norm_vec2 = self.vec2/np.sum(self.vec2)
             ## kl-distance
             kl_list = [(norm_vec1[elm]-norm_vec2[elm])*np.log10(norm_vec1[elm]/norm_vec2[elm]) for elm in range(len(norm_vec1)) if norm_vec1[elm]!=0 and norm_vec2[elm]!=0]
+            print(kl_list)
             if len(kl_list)==0:
                 res.append(np.nan)
             else:
@@ -72,12 +79,14 @@ class SimCheck:
     def correlation(self):
         inner_product = np.dot((self.vec1-np.mean(self.vec1))[0],(self.vec2-np.mean(self.vec2))[0])
         vec1_norm = np.linalg.norm(self.vec1)
-        vec2_norm = np.linalg.norm(self.vec2)   
+        vec2_norm = np.linalg.norm(self.vec2)
+        if vec1_norm*vec2_norm==0:
+            return [0]
         return [inner_product/(vec1_norm*vec2_norm)]
         
 ## test
 if __name__=='__main__':
     test_sig1 = [[1],[2],[1],[2],[1],[2],[1],[2]]
     test_sig2 = [[2],[1],[2],[1],[2],[1],[2],[1]]
-    sim = SimCheck(test_sig1,test_sig2,'corr')
-    aaa = sim.run_by_option()
+    sim = SimCheck(test_sig1,test_sig2,'kl')
+    aaa = sim.run()

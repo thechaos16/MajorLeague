@@ -6,6 +6,7 @@ import WAR_Predictor.python_utils.WAR_utils as wu
 import WAR_Predictor.data_handler.data_splitter as ds
 import WAR_Predictor.matching_alg.linRegression as rg
 import WAR_Predictor.training.evaluation as ev
+import WAR_Predictor.matching_alg.sim_check_iter as sci
 
 ## WAR predictor (training model)
 class WAR_Train:
@@ -34,7 +35,7 @@ class WAR_Train:
             return test_idx
     
     ## training model by similarity check
-    def by_sim_check(self,train=None,test=None):
+    def by_sim_check(self,train=None,test=None,is_iter=False):
         ## exception handler
         if train is None:
             try:
@@ -64,15 +65,17 @@ class WAR_Train:
             for j in range(len(train)):
                 train_list = wu.dict_to_list(train[j]['data'],season_interval)
                 ## this is only for current one. err should be array afterwards
-                sii = si.SimCheck(test_list,train_list[0:-1],'corr')
-                err = sii.run_by_option()[0]
+                if is_iter:
+                    sii = sci.SimCheckIteration(test_list,train_list[0:-1],'corr')
+                else:
+                    sii = si.SimCheck(test_list,train_list[0:-1],'corr')
+                err = sii.run()[0]
                 if err==0:
                     err = 0.00001
                 res+=(train_list[-1][0]/err)
                 errsum+=1/err
             res/=errsum
             pred_res.append(res)
-            
         eval_res = self.evaluation(pred_res,ground_truth)
         return pred_res, eval_res
     

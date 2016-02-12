@@ -11,6 +11,8 @@ class Evaluation:
     def __init__(self,prediction,ground_truth,opt = 'mse'):
         self.prediction = prediction
         self.ground_truth = ground_truth
+        if len(self.prediction)!=len(self.ground_truth):
+            raise ValueError('ground truth and prediction should have same length!')
         if opt==None:
             self.opt='mse'
         else:
@@ -24,7 +26,8 @@ class Evaluation:
         
     def mse(self):
         ## normalization?
-        mse = np.sqrt(np.mean((np.array(self.prediction)-np.array(self.ground_truth))**2))
+        result = (np.array(self.prediction)-np.array(self.ground_truth))**2
+        mse = np.sqrt(np.mean(np.array([elm for elm in result if elm is not np.nan])))
         return mse
         
     def gini(self):

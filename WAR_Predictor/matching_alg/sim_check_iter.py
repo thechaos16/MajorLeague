@@ -25,10 +25,10 @@ class SimCheckIteration:
         result_list = []
         for i in range(len(self.vec1)):
             similarity_check = si.SimCheck(self.vec1[i:],self.vec2[i:],self.opt)
-            error = similarity_check.run_by_option()
+            error = similarity_check.run()
             result_list.append(error)
         ## should be improved
-        return np.mean(result_list)
+        return [np.mean([elm for elm in result_list if elm is not np.nan])]
             
 if __name__=='__main__':
     kk = SimCheckIteration([[1],[2],[3]],[[1],[2],[5]],'kl')
