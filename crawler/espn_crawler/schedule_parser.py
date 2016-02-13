@@ -29,16 +29,27 @@ class ScheduleParser():
         if self.time_comparison(cur_time,end_interval):
             end_interval = cur_time.copy()
             
-        interval_list = [self.time_dict_to_str(start_interval)]
-        
+        interval_list = []
+        cur_str = self.time_dict_to_str(start_interval)
+        terminal_cond = self.time_dict_to_str(end_interval)
+        while True:
+            cur_str = self.time_validity_checker(cur_str)
+            if int(cur_str)>int(terminal_cond):
+                break
+            interval_list.append(cur_str)
+            cur_str = str(int(cur_str)+1)
         return interval_list
         
     ## if time1<time2, return True, otherwise, return False        
     def time_comparison(self,time1,time2):
         if time1['year']>time2['year']:
             return False
+        elif time1['year']<time2['year']:
+            return True
         if time1['month']>time2['month']:
             return False
+        elif time1['month']<time2['month']:
+            return True
         if time1['day']>time2['day']:
             return False        
         return True
@@ -53,5 +64,24 @@ class ScheduleParser():
             day_str = '0'+str(time_dict['day'])
         else:
             day_str = str(time_dict['day'])
-        time_str = time_str+month_str+day+str
+        time_str = time_str+month_str+day_str
         return time_str
+        
+    def time_validity_checker(self,time_str):
+        ## parse year as well in case of leap year
+        ## for baseball, leap year doesn't count
+        year = time_str[:4]
+        month = time_str[4:6]
+        day = time_str[6:]
+        
+        if int(day)>self.month_day_dictionary[int(month)]:
+            new_month_str = int(month)+1
+            if new_month_str<10:
+                new_month_str = '0'+str(new_month_str)
+            else:
+                new_month_str = str(new_month_str)
+            return year+new_month_str+'01'
+        return time_str
+        
+if __name__=='__main__':
+    test_instance = ScheduleParser({'year':2015,'month':5,'day':10},{'year':2015,'month':6,'day':30})
