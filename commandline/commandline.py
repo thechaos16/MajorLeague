@@ -12,7 +12,7 @@ aa = dg.DataExport({'season':[2011,2015],'type':'batter'})
 aa.get_stat(['WAR'])
 mm = aa.get_db()
 
-new_train = tr.WAR_Train(mm,{'season':[2011,2015]},'regression')
+new_train = tr.WAR_Train(mm,{'season':[2011,2015]},'regression',True)
 
 ## manual splitter
 test_idx = int(len(new_train.w_data)*2/3)

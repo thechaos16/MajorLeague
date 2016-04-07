@@ -4,18 +4,20 @@ import warnings
 import WAR_Predictor.matching_alg.sim_check as si
 import WAR_Predictor.python_utils.WAR_utils as wu
 import WAR_Predictor.data_handler.data_splitter as ds
-import WAR_Predictor.matching_alg.linRegression as rg
+import WAR_Predictor.matching_alg.linear_regression as rg
 import WAR_Predictor.training.evaluation as ev
 import WAR_Predictor.matching_alg.sim_check_iter as sci
+import WAR_Predictor.matching_alg.hidden_markov_model as hmm
 
 ## WAR predictor (training model)
 class WAR_Train:
     ## initialize
     ## param should be specified
-    def __init__(self,data,param,alg = 'sim'):
+    def __init__(self,data,param,alg = 'sim',is_train=False):
         self.w_data = data
         self.alg = alg.lower()
         self.param = param
+        self.is_train = is_train
     
     ## modules for splitting data
     def split_data(self,opt):
@@ -57,7 +59,10 @@ class WAR_Train:
         for i in range(len(test)):
             season_interval = self.param['season']
             # season for test should be different (last season shouldn't be added)
-            test_season = [season_interval[0],season_interval[1]-1]
+            if self.is_train:
+                test_season = [season_interval[0],season_interval[1]-1]
+            else:
+                test_season = [season_interval[0]+1,season_interval[1]]
             test_list = wu.dict_to_list(test[i]['data'],test_season)
             ground_truth.append(wu.dict_to_list(test[i]['data'],[season_interval[1],season_interval[1]])[0])
             res = 0.0
@@ -131,6 +136,13 @@ class WAR_Train:
             except NameError:
                 self.split_data('random')
                 test = self.test
+        begin_prob = np.zeros(1)
+        trans_matrix = np.zeros(1,1)
+        means = np.zeros(1)
+        variance = np.zeros(1,1)
+        hmm_model = hmm.HiddenMarkovModel(begin_prob,trans_matrix,means,variance)
+                
+        
         return 0
 
     def evaluation(self,prediction,ground_truth,opt=None):

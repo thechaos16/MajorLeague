@@ -88,5 +88,5 @@ class SimCheck:
 if __name__=='__main__':
     test_sig1 = [[1],[2],[1],[2],[1],[2],[1],[2]]
     test_sig2 = [[2],[1],[2],[1],[2],[1],[2],[1]]
-    sim = SimCheck(test_sig1,test_sig2,'kl')
+    sim = SimCheck(test_sig1,test_sig2,'corr')
     aaa = sim.run()

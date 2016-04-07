@@ -11,7 +11,7 @@ import numpy as np
 sys.path.append('../')
 import WAR_Predictor.python_utils.WAR_utils as wu
 
-class utilsTest(unittest.TestCase):
+class UtilsTest(unittest.TestCase):
     number_of_test = 10
     def test_interval(self):
         for i in range(self.number_of_test):
@@ -45,6 +45,6 @@ class utilsTest(unittest.TestCase):
             
 
 if __name__=='__main__':
-    test = unittest.makeSuite(utilsTest,'test')
+    test = unittest.makeSuite(UtilsTest,'test')
     run = unittest.TextTestRunner()
     run.run(test)
