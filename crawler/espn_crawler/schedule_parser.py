@@ -40,7 +40,7 @@ class ScheduleParser():
             cur_str = str(int(cur_str)+1)
         return interval_list
         
-    ## if time1<time2, return True, otherwise, return False        
+    ## if time1<=time2, return True, otherwise, return False        
     def time_comparison(self,time1,time2):
         if time1['year']>time2['year']:
             return False
@@ -52,7 +52,7 @@ class ScheduleParser():
             return True
         if time1['day']>time2['day']:
             return False        
-        return True
+        return False
         
     def time_dict_to_str(self,time_dict):
         time_str = str(time_dict['year'])

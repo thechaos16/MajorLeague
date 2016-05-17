@@ -9,22 +9,35 @@ Created on Tue Mar 29 16:55:55 2016
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import chardet
+from schedule_parser import ScheduleParser
 
-class URLHandler():
-    def __init__(self, url):
-        self.url = url
-        self.urldata = urlopen(url)
+class EspnCrawler():
+    def __init__(self, interval):
+        self.interval = ScheduleParser(interval[0], interval[1]).interval
+        self.base_url_for_schedule = 'http://espn.go.com/mlb/schedule/_/date/'
+        
+    def run(self):
+        game_list = []
+        for date in self.interval:
+            game_list += self.schedule_parser(date)
+        
+    def schedule_parser(self, date):
+        date_url = self.base_url_for_schedule + str(date)
+        url_date = self.url_parser(date_url)
+        print(url_date)
+        return []
     
     # make url as string
-    def url_parser(self):
+    def url_parser(self, url):
+        urldata = urlopen(url)
         # this encoding should be checked automatically
-        data = self.urldata.read()
+        data = urldata.read()
         encoding = chardet.detect(data)
         new_url_data = str(data.decode(encoding['encoding']))
         return new_url_data
     
-    def html_parser(self):
-        url_data = self.url_parser()
+    def play_by_play_parser(self, url):
+        url_data = self.url_parser(url)
         soup = BeautifulSoup(url_data, 'lxml')
         valid_list = soup.find_all('table')
         is_valid = False
@@ -36,9 +49,6 @@ class URLHandler():
             for row in row_lists:
                 new_row = list(row.find_all('td'))
                 if len(new_row) != 0:
-                    # this condition is only for espn data, so this file should be moved to MajorLeague project
-                    #if is_valid:
-                    #    valid_data.append(new_row)
                     if 'Play-By-Play' in str(new_row[0]):
                         is_valid = True
                 if is_valid:
@@ -66,11 +76,7 @@ class URLHandler():
             html_return.append(inn)
         return html_return
         
-    # put refined data into DB
-    def store_db(self, db_path):
-        pass
        
 if __name__=='__main__':
-    mm = URLHandler('http://espn.go.com/mlb/playbyplay?gameId=350615102')
-    #mm = URLHandler('https://docs.python.org/3/library/html.parser.html')    
-    dd = mm.html_parser()
+    mm = EspnCrawler([{'year':2015,'month':5,'day':10},{'year':2015,'month':5,'day':10}]) 
+    # dd = mm.play_by_play_parser()
