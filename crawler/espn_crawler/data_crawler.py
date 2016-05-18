@@ -24,7 +24,7 @@ class EspnCrawler():
     def schedule_parser(self, date):
         date_url = self.base_url_for_schedule + str(date)
         url_date = self.url_parser(date_url)
-        print(url_date)
+        # print(url_date)
         return []
     
     # make url as string
