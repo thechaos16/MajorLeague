@@ -23,8 +23,16 @@ class EspnCrawler():
         
     def schedule_parser(self, date):
         date_url = self.base_url_for_schedule + str(date)
-        url_date = self.url_parser(date_url)
-        # print(url_date)
+        url_data = self.url_parser(date_url)
+        soup = BeautifulSoup(url_data, 'lxml')
+        valid_list = soup.find_all('table')
+        for elm in valid_list:
+            row_lists = elm.find_all('tr')
+            for row in row_lists:
+                row = str(row)
+                if 'gameId' in row:
+                    pass
+                    #print(row)
         return []
     
     # make url as string
@@ -78,5 +86,6 @@ class EspnCrawler():
         
        
 if __name__=='__main__':
-    mm = EspnCrawler([{'year':2015,'month':5,'day':10},{'year':2015,'month':5,'day':10}]) 
+    mm = EspnCrawler([{'year':2015,'month':5,'day':10},{'year':2015,'month':5,'day':10}])
+    mm.schedule_parser(mm.interval[0])
     # dd = mm.play_by_play_parser()
