@@ -15,6 +15,7 @@ class EspnCrawler():
     def __init__(self, interval):
         self.interval = ScheduleParser(interval[0], interval[1]).interval
         self.base_url_for_schedule = 'http://espn.go.com/mlb/schedule/_/date/'
+        self.base_game_url = 'http://espn.go.com/mlb/playbyplay?gameId='
         
     def run(self):
         game_list = []
@@ -23,16 +24,20 @@ class EspnCrawler():
         
     def schedule_parser(self, date):
         date_url = self.base_url_for_schedule + str(date)
+        print(date_url)
         url_data = self.url_parser(date_url)
         soup = BeautifulSoup(url_data, 'lxml')
         valid_list = soup.find_all('table')
+        game_id_list = []
         for elm in valid_list:
             row_lists = elm.find_all('tr')
             for row in row_lists:
+                hyper_link = row.find_all('a')
+                for links in hyper_link:
+                    if 'gameId' in str(links):
+                        pass
+                        # print(links)
                 row = str(row)
-                if 'gameId' in row:
-                    pass
-                    #print(row)
         return []
     
     # make url as string
@@ -44,7 +49,8 @@ class EspnCrawler():
         new_url_data = str(data.decode(encoding['encoding']))
         return new_url_data
     
-    def play_by_play_parser(self, url):
+    def play_by_play_parser(self, game_id):
+        url = self.base_game_url + str(game_id)
         url_data = self.url_parser(url)
         soup = BeautifulSoup(url_data, 'lxml')
         valid_list = soup.find_all('table')
