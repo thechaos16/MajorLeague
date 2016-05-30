@@ -24,7 +24,6 @@ class EspnCrawler():
         
     def schedule_parser(self, date):
         date_url = self.base_url_for_schedule + str(date)
-        print(date_url)
         url_data = self.url_parser(date_url)
         soup = BeautifulSoup(url_data, 'lxml')
         valid_list = soup.find_all('table')
@@ -35,10 +34,10 @@ class EspnCrawler():
                 hyper_link = row.find_all('a')
                 for links in hyper_link:
                     if 'gameId' in str(links):
-                        pass
-                        # print(links)
+                        game_id = str(links).split('gameId=')[1].split('"')[0]
+                        game_id_list.append(game_id)
                 row = str(row)
-        return []
+        return game_id_list
     
     # make url as string
     def url_parser(self, url):
