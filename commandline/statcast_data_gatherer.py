@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import json
+import os
 sys.path.append('../')
 from crawler.baseball_savant_crawler.data_crawler import URLHandler
 
@@ -26,10 +28,16 @@ def data_gatherer(**args):
     return return_dict
 
 
-def data_storage(data, **args):
-    pass
+def data_storage(data, args):
+    if args['type'] == 'file_system':
+        base_dir = args['dir']
+        for year in data.keys():
+            json.dump(data[year], open(os.path.join(base_dir, year+'.json'),'w'))
+    else:
+        raise NotImplementedError()
 
 
 if __name__ == '__main__':
     base_url = 'https://baseballsavant.mlb.com/statcast_leaderboard'
     ans = data_gatherer(url=base_url, abs=100, year=[2015, 2016], player_type='both')
+    data_storage(ans, {'type': 'file_system', 'dir': 'C:\git_project\MajorLeague\data\statcast'})
