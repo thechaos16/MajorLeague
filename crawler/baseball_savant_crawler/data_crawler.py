@@ -16,21 +16,27 @@ class URLHandler():
         if 'url' not in kwargs:
             raise KeyError('URL should be in input argument!')
         self.url = str(kwargs['url'])
+        self.base_url = str(kwargs['url'])
+        self.update_url(**kwargs)
+    
+    # make url as string
+    def url_parser(self):
+        # this encoding should be checked automatically
+        urldata = urlopen(self.url)
+        data = urldata.read()
+        encoding = chardet.detect(data)
+        new_url_data = str(data.decode(encoding['encoding']))
+        return new_url_data
+        
+    # update url
+    def update_url(self, **kwargs):
+        self.url = self.base_url
         if len(kwargs) >= 2:
             self.url += '?'
         for key, data in kwargs.items():
             if key == 'url':
                 continue
             self.url += (key + '=' + str(data) + '&')
-        self.urldata = urlopen(self.url)
-    
-    # make url as string
-    def url_parser(self):
-        # this encoding should be checked automatically
-        data = self.urldata.read()
-        encoding = chardet.detect(data)
-        new_url_data = str(data.decode(encoding['encoding']))
-        return new_url_data
     
     # statcast
     # it returns list of dictionary
