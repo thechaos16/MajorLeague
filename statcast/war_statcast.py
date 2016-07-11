@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import numpy as np
 import pandas as pd
 try:
     from crawler.baseball_savant_crawler.data_crawler import URLHandler
@@ -16,6 +17,11 @@ class WARStatCast:
         self.data_args = args['data']
         self.fg_data = None
         self.sc_data = None
+        
+    def run(self):
+        self.get_data()
+        matched_data = self.join_data()
+        corr = self.correlation(matched_data)
     
     def get_data(self):
         fg_parser = FangraphParser(self.data_args)
@@ -38,6 +44,26 @@ class WARStatCast:
                         one_row['war'] = data['data'][idx]['WAR']
                         matched_data.append(one_row)
         return matched_data
+        
+    def correlation(self, matched_data):
+        converted_data = {}
+        for i, data in enumerate(matched_data):
+            if i==0:
+                for key in data.keys():
+                    try:
+                        value = float(data[key])
+                        converted_data[key] = [value]
+                    except ValueError:
+                        pass
+            else:
+                for key in data.keys():
+                    if key in converted_data:
+                        converted_data[key].append(float(data[key]))
+        main_key = 'war'
+        for key in converted_data.keys():
+            if key != main_key:
+                corr = np.corrcoef(np.array(converted_data[key]), np.array(converted_data[main_key]))
+                print([np.min(corr), key])
 
 
 if __name__ == '__main__':
