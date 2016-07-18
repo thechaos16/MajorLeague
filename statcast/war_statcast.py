@@ -2,13 +2,12 @@
 
 import sys
 import numpy as np
-import pandas as pd
+from sklearn.linear_model import Ridge
 try:
-    from crawler.baseball_savant_crawler.data_crawler import URLHandler
+    from data_parser.fangraph_parser import FangraphParser
 except ImportError:
     sys.path.append('../')
-    from crawler.baseball_savant_crawler.data_crawler import URLHandler
-from data_parser.fangraph_parser import FangraphParser
+    from data_parser.fangraph_parser import FangraphParser
 from data_parser.statcast_parser import StatCastParser
 
 
@@ -17,6 +16,10 @@ class WARStatCast:
         self.data_args = args['data']
         self.fg_data = None
         self.sc_data = None
+        if 'key' in args:
+            self.main_key = args['key']
+        else:
+            self.main_key = 'war'
         
     def run(self):
         self.get_data()
@@ -59,11 +62,47 @@ class WARStatCast:
                 for key in data.keys():
                     if key in converted_data:
                         converted_data[key].append(float(data[key]))
-        main_key = 'war'
         for key in converted_data.keys():
-            if key != main_key:
+            if key != self.main_key:
                 corr = np.corrcoef(np.array(converted_data[key]), np.array(converted_data[main_key]))
                 print([np.min(corr), key])
+
+    def regression_weight(self, matched_data):
+        converted_data = {}
+        for i, data in enumerate(matched_data):
+            if i==0:
+                for key in data.keys():
+                    try:
+                        value = float(data[key])
+                        converted_data[key] = [value]
+                    except ValueError:
+                        pass
+            else:
+                for key in data.keys():
+                    if key in converted_data:
+                        converted_data[key].append(float(data[key]))
+        sorted_key = sorted(converted_data.keys())
+        input_key = [key for key in sorted_key if key != self.main_key]
+        x = [] 
+        for key in input_key:
+            # normalization
+            numpy_data = normalization(np.array(converted_data[key]))      
+            x.append(numpy_data)
+        x = np.array(x).T
+        y = normalization(np.array(converted_data[self.main_key]))
+        regressor = Ridge(alpha=1.0, normalize=True)
+        regressor.fit(x,y)
+        sorted_result = np.array(input_key)[np.argsort(np.array(regressor.coef_))]
+        sorted_result = sorted_result[::-1]
+        coefficient = sorted(regressor.coef_, reverse = True)
+        return [(sorted_result[i], coefficient[i]) for i in range(len(sorted_result))]
+
+
+def normalization(numpy_data):
+    numpy_data -= np.mean(numpy_data)
+    if np.std(numpy_data) != 0:
+        numpy_data /= np.std(numpy_data)
+    return numpy_data
 
 
 if __name__ == '__main__':
