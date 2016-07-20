@@ -19,7 +19,7 @@ class WARStatCast:
         if 'key' in args:
             self.main_key = args['key']
         else:
-            self.main_key = 'war'
+            self.main_key = 'WAR'
         
     def run(self):
         self.get_data()
@@ -44,7 +44,7 @@ class WARStatCast:
                     id_for_sc = self.data_args['player_id'].lower()
                     if id_for_sc in sc and sc[id_for_sc] == player_id:
                         one_row = sc.copy()
-                        one_row['war'] = data['data'][idx]['WAR']
+                        one_row[self.main_key.lower()] = data['data'][idx][self.main_key]
                         matched_data.append(one_row)
         return matched_data
         
@@ -63,7 +63,7 @@ class WARStatCast:
                     if key in converted_data:
                         converted_data[key].append(float(data[key]))
         for key in converted_data.keys():
-            if key != self.main_key:
+            if key != self.main_key.lower():
                 corr = np.corrcoef(np.array(converted_data[key]), np.array(converted_data[main_key]))
                 print([np.min(corr), key])
 
@@ -82,14 +82,14 @@ class WARStatCast:
                     if key in converted_data:
                         converted_data[key].append(float(data[key]))
         sorted_key = sorted(converted_data.keys())
-        input_key = [key for key in sorted_key if key != self.main_key]
+        input_key = [key for key in sorted_key if key != self.main_key.lower()]
         x = [] 
         for key in input_key:
             # normalization
             numpy_data = normalization(np.array(converted_data[key]))      
             x.append(numpy_data)
         x = np.array(x).T
-        y = normalization(np.array(converted_data[self.main_key]))
+        y = normalization(np.array(converted_data[self.main_key.lower()]))
         regressor = Ridge(alpha=1.0, normalize=True)
         regressor.fit(x,y)
         sorted_result = np.array(input_key)[np.argsort(np.array(regressor.coef_))]
@@ -109,6 +109,6 @@ if __name__ == '__main__':
     war_instance = WARStatCast(data = {'season': [2015, 2015],
                                        'type': 'batter',
                                        'year': range(2015, 2016),
-                                       'player_id': 'Name'})
+                                       'player_id': 'Name'}, key='SLG')
     war_instance.get_data()
     match = war_instance.join_data()
