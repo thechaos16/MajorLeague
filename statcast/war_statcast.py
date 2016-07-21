@@ -25,6 +25,8 @@ class WARStatCast:
         self.get_data()
         matched_data = self.join_data()
         corr = self.correlation(matched_data)
+        importances = self.regression_weight(matched_data)
+        return {'correlation': corr, 'importance': importances}
     
     def get_data(self):
         fg_parser = FangraphParser(self.data_args)
@@ -62,10 +64,13 @@ class WARStatCast:
                 for key in data.keys():
                     if key in converted_data:
                         converted_data[key].append(float(data[key]))
+        corr_list = []
         for key in converted_data.keys():
             if key != self.main_key.lower():
-                corr = np.corrcoef(np.array(converted_data[key]), np.array(converted_data[main_key]))
-                print([np.min(corr), key])
+                corr = np.corrcoef(np.array(converted_data[key]), 
+                                            np.array(converted_data[self.main_key.lower()]))
+                corr_list.append((key, np.min(corr)))
+        return sorted(corr_list, key=lambda x:x[1], reverse=True)
 
     def regression_weight(self, matched_data):
         converted_data = {}
@@ -109,6 +114,5 @@ if __name__ == '__main__':
     war_instance = WARStatCast(data = {'season': [2015, 2015],
                                        'type': 'batter',
                                        'year': range(2015, 2016),
-                                       'player_id': 'Name'}, key='SLG')
-    war_instance.get_data()
-    match = war_instance.join_data()
+                                       'player_id': 'Name'}, key='HR')
+    res = war_instance.run()
