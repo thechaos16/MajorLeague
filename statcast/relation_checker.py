@@ -16,7 +16,7 @@ def covariance_calculator(data_frame):
     valid_columns = [field for field in data_frame.columns if data_frame[field].dtype!='object']
     #print(valid_columns)
     result = data_frame[valid_columns].corr()
-    return valid_columns, result
+    return result
 
 
 def statcase_data_parser(data_args):
@@ -31,9 +31,18 @@ def statcase_data_parser(data_args):
     return df
     
 
+def result_miner(cov_result):
+    result = {}
+    for field in cov_result.columns:
+        one_series = cov_result[field]
+        field_result = [(idx, one_series[idx]) for idx in one_series.index if idx!=field]
+        result[field] = sorted(field_result, key=lambda x:x[1], reverse=True)
+    return result
+    
+
 if __name__ == '__main__':
     data = statcase_data_parser({'season': [2015, 2015],
                                        'type': 'batter',
                                        'year': range(2015, 2016),
                                        'player_id': 'Name'})
-    field_names, cov = covariance_calculator(data)
+    cov = covariance_calculator(data)
