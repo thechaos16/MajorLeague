@@ -4,7 +4,6 @@ Created on Tue Mar 29 16:55:55 2016
 
 @author: minkyu
 """
-
 # for getting html file from url
 from urllib.request import urlopen
 from bs4 import BeautifulSoup

@@ -6,22 +6,21 @@ Created on Tue Dec 15 23:37:05 2015
 """
 
 import numpy as np
-import scipy
 import warnings
 from sklearn import linear_model
 
-## Regressor
+
+# Regressor
 class Regressor:
-    def __init__(self,inputVec,output,alg='ridge',param={}):
-        self.inputVec = inputVec
+    def __init__(self, input_vector, output, alg='ridge', param={}):
+        self.input_vector = input_vector
         self.output = output
         self.alg = alg
         self.param = param
-        #self.run()
     
     def run(self):
         if self.alg.lower()=='linear':
-            ## validity checker
+            # validity checker
             coeff = self.linear_regression()
             return coeff
         elif self.alg.lower()=='ridge':
@@ -32,21 +31,25 @@ class Regressor:
             return coeff
         else:
             warnings.warn('Other algorithm has not been implemented!')
+
+    def normalization(self):
+        # for now, it runs inside sklearn module
+        pass
     
     def linear_regression(self):
         clf = linear_model.LinearRegression()
-        #print(self.inputVec)
-        clf.fit(self.inputVec,self.output)
+        # print(self.input_vector)
+        clf.fit(self.input_vector,self.output)
         return clf.coef_
         
     def ridge_regression(self):
         clf = linear_model.Ridge()
-        clf.fit(self.inputVec,self.output)
+        clf.fit(self.input_vector,self.output)
         return clf.coef_
         
     def elastic_net(self):
         clf = linear_model.ElasticNet()
-        clf.fit(self.inputVec,self.output)
+        clf.fit(self.input_vector,self.output)
         return clf.coef_
         
     def prediction(self,test_data,coeff):

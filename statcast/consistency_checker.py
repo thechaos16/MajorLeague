@@ -18,7 +18,7 @@ class ConsistencyChecker:
         self.year_interval = year_interval
         self.position = position.lower()
         
-    def data_gatherer(self):
+    def read_data(self):
         if self.position == 'all':
             pass
         elif self.position == 'batter':

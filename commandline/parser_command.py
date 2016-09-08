@@ -2,11 +2,9 @@
 import sys
 
 sys.path.append('../')
-
-import data_parser.fangraph_parser as fp
+from data_parser.fangraph_parser import FangraphParser
 
 opt = {'season':[2011,2015],'type':'batter'}
 
-fparser = fp.FangraphParser(opt)
-#kk = fparser.fReader()
+fparser = FangraphParser(opt)
 pp = fparser.get_db()

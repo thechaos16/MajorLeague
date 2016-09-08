@@ -4,12 +4,11 @@ Created on Tue Mar 29 16:55:55 2016
 
 @author: minkyu
 """
-
-# for getting html file from url
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import chardet
 from schedule_parser import ScheduleParser
+
 
 class EspnCrawler():
     def __init__(self, interval):
@@ -90,7 +89,7 @@ class EspnCrawler():
         return html_return
         
        
-if __name__=='__main__':
-    mm = EspnCrawler([{'year':2015,'month':5,'day':10},{'year':2015,'month':5,'day':10}])
+if __name__ == '__main__':
+    mm = EspnCrawler([{'year': 2015, 'month': 5, 'day': 10},
+                      {'year': 2015, 'month': 5, 'day': 10}])
     mm.schedule_parser(mm.interval[0])
-    # dd = mm.play_by_play_parser()

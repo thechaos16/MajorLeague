@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
-import os,sys
+import os, sys
 import numpy as np
-import data_parser.utils as utils
+from data_parser import utils
+
 
 # class for fangraph csv parser
 class FangraphParser:
     # constructor
-    def __init__(self,opt):
+    def __init__(self, opt):
         # option (dictionary) contains
         # mandatory:
         # season, batter/pitcher
         self.season = []
-        if len(opt['season'])==1:
+        if len(opt['season']) == 1:
             self.season.append(str(opt['season'][0]))
-            #self.season[1] = str(opt['season'])
         else:            
-            self.season = np.linspace(opt['season'][0],opt['season'][1],opt['season'][1]-opt['season'][0]+1)
+            self.season = np.linspace(opt['season'][0],
+                                      opt['season'][1], 
+                                      opt['season'][1]-opt['season'][0]+1)
             for i in range(len(self.season)):
                 self.season[i] = np.uint(self.season[i])
         # batter or pitcher
@@ -37,27 +39,29 @@ class FangraphParser:
 
     # option handler
     def option_handler(self):
-        return ''
-
+        raise NotImplementedError()
+        
     # fileList
     def set_file_list(self):
         for i in range(len(self.season)):
             temp_list = []
-            file_path = '../data/fangraphs/'+str(np.uint(self.season[i]))+'/'+self.type
+            file_path = '../data/fangraphs/' + \
+            str(np.uint(self.season[i])) + '/' + self.type
             contents = os.listdir(file_path)
             for j in range(len(contents)):
-                temp_list.append(file_path+'/'+contents[j])
+                temp_list.append(file_path + '/' + contents[j])
             self.fp.append(temp_list)
             
     def get_file_list(self):
         return self.fp
 
     # background knowledge (later)
-    def set_background(self,t):
+    def set_background(self, t):
         if t == 'batter':
             self.background_knowledge = []
         elif t == 'pitcher':
             self.background_knowledge = []
+            
     def get_background(self):
         return self.background_knowledge
 
@@ -71,44 +75,42 @@ class FangraphParser:
             temp_list = []
             for j in range(len(self.fp[i])):
                 if not os.path.isfile(self.fp[i][j]):
-                    print(self.fp[i][j]+' does not exist!')
+                    print(self.fp[i][j] + ' does not exist!')
                     continue
-                reader = open(self.fp[i][j],'r',encoding='utf-8')
+                reader = open(self.fp[i][j], 'r', encoding='utf-8')
                 # read line by line
-                oneDB = []
+                one_database = []
                 # header (field)
                 field_line = reader.readline()
                 field_line = field_line.strip('\n')
                 field_line = field_line.strip('"')
                 [field,field_type] = self.field_parser(field_line)
-                oneDB.append(field)
+                one_database.append(field)
                 for line in reader:
                     # remove '\n' & '"'
                     line = line.strip('\n')
                     line = line.strip('"')
                     # parsing string into data
-                    oneDB.append(self.line_parser(line,field))
-                temp_list.append(oneDB)
+                    one_database.append(self.line_parser(line,field))
+                temp_list.append(one_database)
             data.append(temp_list)
         return data
 
     # field parser
-    def field_parser(self,field_line):
+    def field_parser(self, field_line):
         field_type = []
         field = field_line.split('","')
-        field[0] = field[0].split('"')[1]
-        #for i in range(len(tfield)):
-        #    bg = getBackground()            
+        field[0] = field[0].split('"')[1] 
         return [field,field_type]
     
     # line parser
-    def line_parser(self,line,field):
+    def line_parser(self, line, field):
         # requirements:
         # type controller (e.g. 33.5% -> 0.335)
         # error finder (if integer in name, return error)
         temp_line = line.split('","')
         # consistency check
-        ccheck = len(temp_line)==len(field)
+        assert(len(temp_line)==len(field))
         # modification
         for i in range(len(field)):
             if '%' in field[i]:
@@ -208,7 +210,6 @@ class FangraphParser:
             final.append(dict(zip(merged[0],merged[i])))
         return final
         
-
     # get database
     def get_db(self):
         self.join()
