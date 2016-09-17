@@ -13,7 +13,7 @@ from WAR_Predictor.python_utils.WAR_utils import dict_to_list
 class WAR_Train:
     # initialize
     # param should be specified
-    def __init__(self,data, param, alg = 'sim', is_train=False):
+    def __init__(self, data, param, alg = 'sim', is_train=False):
         self.w_data = data
         self.alg = alg.lower()
         self.param = param

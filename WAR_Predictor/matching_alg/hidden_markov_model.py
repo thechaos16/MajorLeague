@@ -6,7 +6,7 @@ Created on Sat Feb 13 20:25:37 2016
 """
 
 import numpy as np
-from hmmleanr import hmm
+from hmmlearn import hmm
 
 
 class HiddenMarkovModel:
