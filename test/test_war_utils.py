@@ -27,6 +27,7 @@ class UtilsTest(unittest.TestCase):
                 self.assertEqual(res,[least_integer, least_integer+interval-1])
             except Exception:
                 pass
+
     def test_dict_to_list(self):
         for i in range(self.number_of_test):
             least_integer = np.random.randint(1990,2020)
@@ -45,6 +46,4 @@ class UtilsTest(unittest.TestCase):
             
 
 if __name__=='__main__':
-    test = unittest.makeSuite(UtilsTest,'test')
-    run = unittest.TextTestRunner()
-    run.run(test)
+    unittest.main(exit=False)

@@ -12,7 +12,7 @@ sys.path.append('../')
 
 
 class FangraphsParserTest(unittest):
-    def init_test(self):
+    def setUp(self):
         self.__make_fake_csv()
 
     def test_parser(self):
@@ -41,4 +41,4 @@ class FangraphsParserTest(unittest):
             f.close()            
     
 if __name__=='__main__':
-    fpt = FangraphsParserTest()
+    unittest.main(exit=False)
