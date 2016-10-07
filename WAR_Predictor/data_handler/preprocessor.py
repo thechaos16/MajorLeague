@@ -19,11 +19,27 @@ class PreProcessor():
             print('dict!')
         return data
         
+    def data_transform(self):
+        intermediate_data = self.data.copy()
+        for field in self.data.columns:
+            # only categorical fields
+            converted = self.one_hot_encoding(field)
+            # remove field
+            intermediate_data = intermediate_data.drop(field, 1)
+            # add fields
+            intermediate_data = pd.concat([intermediate_data, 
+                                           converted], axis=1)
+        final_data = self.numeric_encoding(intermediate_data)
+        return final_data
+        
     def one_hot_encoding(self, field):
         pass
     
-    def numeric_encoding(self, field):
+    def numeric_encoding(self, data_frame):
+        # decomposition based on field_dependency
+        # first, do one_hot_encoding to convert everything into numeric, and run numeric encoding        
         pass
+
     
 
 if __name__ == '__main__':

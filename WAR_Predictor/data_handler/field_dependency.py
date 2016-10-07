@@ -2,6 +2,7 @@
 
 import numpy as np
 import pandas as pd
+from sklearn import decomposition
 
 
 class FieldDependency:
@@ -17,6 +18,8 @@ class FieldDependency:
             
     def field_decomposition(self):
         # decomposite fields based on independency
+        # for svd: numpy.linalg.svd
+        # for pca: sklearn.decomposition.PCA
         pass        
         
     def dependency_check_with_correlation(self):
@@ -42,6 +45,6 @@ class FieldDependency:
 
 if __name__ == '__main__':
     kk = pd.DataFrame(np.random.randn(100, 5), columns=['a','b','c','d','e'])
-    kk['f'] = kk['a']
+    kk['f'] = kk['a'].copy()
     nnn = FieldDependency(kk)
     aaa = nnn.dependency_check_with_correlation()
