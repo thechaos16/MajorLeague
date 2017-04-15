@@ -81,10 +81,10 @@ class EspnCrawler:
                 for column in data:
                     column = str(column)
                     parsed_column = column.split('<')
+                    real_data = ""
                     for elm in parsed_column:
                         if not elm.endswith('>') and elm != '':
-                            real_data = elm.split('>')[1]
-                            break
+                            real_data += elm.split('>')[1]
                     row.append(real_data)
                 inn.append(row)
             html_return.append(inn)
