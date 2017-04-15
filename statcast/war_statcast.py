@@ -2,11 +2,7 @@
 import sys
 import numpy as np
 from sklearn.linear_model import Ridge
-try:
-    from data_parser.fangraph_parser import FangraphParser
-except ImportError:
-    sys.path.append('../')
-    from data_parser.fangraph_parser import FangraphParser
+from data_parser.fangraph_parser import FangraphParser
 from data_parser.statcast_parser import StatCastParser
 
 

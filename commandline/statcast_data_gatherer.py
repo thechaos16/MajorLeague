@@ -2,7 +2,6 @@
 import sys
 import json
 import os
-sys.path.append('../')
 from crawler.baseball_savant_crawler.data_crawler import URLHandler
 
 

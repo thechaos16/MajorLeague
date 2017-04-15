@@ -9,7 +9,7 @@ class StatCastParser:
         if 'db' in args:
             self.db_path = args['db']
         else:
-            self.db_path = '../data/statcast'
+            self.db_path = './data/statcast'
         if 'year' in args:
             year_list = [str(year) for year in args['year']]
             self.year = year_list

@@ -45,7 +45,7 @@ class FangraphParser:
     def set_file_list(self):
         for i in range(len(self.season)):
             temp_list = []
-            file_path = os.path.join('../data/fangraphs', 
+            file_path = os.path.join('./data/fangraphs',
                                      str(np.uint(self.season[i])),
                                      self.type)
             contents = os.listdir(file_path)

@@ -3,11 +3,7 @@
 import sys
 import pandas as pd
 import numpy as np
-try:
-    from data_parser.statcast_parser import StatCastParser
-except ImportError:
-    sys.path.append('../')
-    from data_parser.statcast_parser import StatCastParser
+from data_parser.statcast_parser import StatCastParser
 
 
 def covariance_calculator(data_frame):
@@ -46,3 +42,4 @@ if __name__ == '__main__':
                                        'year': range(2015, 2016),
                                        'player_id': 'Name'})
     cov = covariance_calculator(data)
+    print(cov)

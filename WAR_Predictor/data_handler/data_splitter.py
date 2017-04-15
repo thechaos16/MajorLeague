@@ -4,15 +4,18 @@ import numpy as np
 
 
 class SplitData:
-    # option: {'method': 'random', 'ratio':0.7}
     def __init__(self, data, opt):
+        """        
+        :param data: pandas dataframe contains full data
+        :param opt: spliting option (for instance, {'method': 'random', 'ratio': 0.2} # Note: ratio is for test data
+        """
         self.data = data
         self.opt = opt
     
     def split_random(self):
         # random sampling
-        up_limit = max(self.data)
-        down_limit = min(self.data)
+        up_limit = len(self.data)
+        down_limit = 0
         test_idx = []
         while True:
             rand_num = random.randint(down_limit, up_limit)
@@ -27,14 +30,13 @@ class SplitData:
         test_idx = []
         candidates = np.linspace(0, len(self.data) - 1, len(self.data))
         np.random.shuffle(candidates)
-        test_idx = [candidates[list_size*elm:list_size*(elm+1)] 
-        for elm in range(number_of_test)]
+        test_idx = [candidates[list_size*elm:list_size*(elm+1)] for elm in range(number_of_test)]
         return test_idx
 
     def split_by_method(self):
-        if self.opt['method'].lower()=='random':
+        if self.opt['method'].lower() == 'random':
             return self.split_random()
-        elif self.opt['method'].lower()=='cross':
+        elif self.opt['method'].lower() == 'cross':
             return self.split_for_cross_validation()
         else:
             warnings.warn('split method should be selected')
