@@ -1,25 +1,29 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Mar 29 16:55:55 2016
-
-@author: minkyu
-"""
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 import chardet
-from schedule_parser import ScheduleParser
+from crawler.espn_crawler.schedule_parser import ScheduleParser
 
 
-class EspnCrawler():
+class EspnCrawler:
     def __init__(self, interval):
         self.interval = ScheduleParser(interval[0], interval[1]).interval
         self.base_url_for_schedule = 'http://espn.go.com/mlb/schedule/_/date/'
         self.base_game_url = 'http://espn.go.com/mlb/playbyplay?gameId='
         
-    def run(self):
+    def run(self, game_type="play-by-play"):
         game_list = []
         for date in self.interval:
             game_list += self.schedule_parser(date)
+        all_game_in_interval = []
+        for one_game in game_list:
+            if game_type.lower() == "play-by-play":
+                all_game_in_interval.append(self.play_by_play_parser(one_game))
+            elif game_type.lower() == "pitch-by-pitch":
+                all_game_in_interval.append(self.pitch_by_pitch_parser(one_game))
+            else:
+                raise NotImplementedError()
+        return all_game_in_interval
         
     def schedule_parser(self, date):
         date_url = self.base_url_for_schedule + str(date)
@@ -27,16 +31,15 @@ class EspnCrawler():
         soup = BeautifulSoup(url_data, 'lxml')
         valid_list = soup.find_all('table')
         game_id_list = []
-        for elm in valid_list:
-            row_lists = elm.find_all('tr')
-            for row in row_lists:
-                hyper_link = row.find_all('a')
-                for links in hyper_link:
-                    if 'gameId' in str(links):
-                        game_id = str(links).split('gameId=')[1].split('"')[0]
-                        game_id_list.append(game_id)
-                row = str(row)
-        return game_id_list
+        row_lists = valid_list[0].find_all('tr')  # The first list is current date (other two are next 2 days)
+        for row in row_lists:
+            hyper_link = row.find_all('a')
+            for links in hyper_link:
+                if 'gameId' in str(links):
+                    game_id = str(links).split('gameId=')[1].split('"')[0]
+                    game_id_list.append(game_id)
+            row = str(row)
+        return game_id_list\
     
     # make url as string
     def url_parser(self, url):
@@ -46,9 +49,8 @@ class EspnCrawler():
         encoding = chardet.detect(data)
         new_url_data = str(data.decode(encoding['encoding']))
         return new_url_data
-    
-    def play_by_play_parser(self, game_id):
-        url = self.base_game_url + str(game_id)
+
+    def one_game_parser(self, url):
         url_data = self.url_parser(url)
         soup = BeautifulSoup(url_data, 'lxml')
         valid_list = soup.find_all('table')
@@ -77,7 +79,7 @@ class EspnCrawler():
             for data in inning:
                 row = []
                 for column in data:
-                    column =  str(column)
+                    column = str(column)
                     parsed_column = column.split('<')
                     for elm in parsed_column:
                         if not elm.endswith('>') and elm != '':
@@ -87,6 +89,14 @@ class EspnCrawler():
                 inn.append(row)
             html_return.append(inn)
         return html_return
+    
+    def play_by_play_parser(self, game_id):
+        url = self.base_game_url + str(game_id)
+        return self.one_game_parser(url)
+
+    def pitch_by_pitch_parser(self, game_id):
+        url = self.base_game_url + str(game_id) + "&full=1"
+        return self.one_game_parser(url)
         
        
 if __name__ == '__main__':
