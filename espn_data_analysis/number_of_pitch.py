@@ -20,21 +20,42 @@ class NumberOfPitch:
         for one_game in self.game_list:
             for one_inning in one_game:
                 for one_at_bat in one_inning:
-                    number_of_pitches = self._pitch_counter(one_at_bat[1])
-                    result = self._result_parser(one_at_bat[1])
+                    number_of_pitches, result = self._pitch_counter_and_result(one_at_bat[1])
+                    print(one_at_bat)
+                    print(number_of_pitches)
+                    print(result)
                     if number_of_pitches in self.mined_data:
                         if result in self.mined_data[number_of_pitches]:
                             self.mined_data[number_of_pitches][result] += 1
                         else:
-                            self.mined_data[number_of_pitches] = 1
+                            self.mined_data[number_of_pitches][result] = 1
                     else:
-                        self.mined_data[number_of_pitches] = dict(result=1)
+                        self.mined_data[number_of_pitches] = {result: 1}
 
-    def _pitch_counter(self, one_batter):
-        return
-
-    def _result_parser(self, one_batter):
-        return
+    def _pitch_counter_and_result(self, one_batter):
+        # FIXME: this parser only valid when there is no runners
+        events = one_batter.split(',')
+        number_of_pitches = len(events)
+        result = events[-1]
+        res = 'O'
+        if 'struck' in result:
+            res = 'SO'
+            number_of_pitches -= 1
+        elif 'hit' in result:
+            res = 'HBP'
+            number_of_pitches -= 1
+        elif 'single' in result:
+            res = 'H'
+        elif 'walk' in result:
+            res = 'BB'
+            number_of_pitches -= 1
+        elif 'double' in result:
+            res = 'D'
+        elif 'triple' in result:
+            res = 'T'
+        elif 'homerun' in result or 'homer' in result:
+            res = 'HR'
+        return number_of_pitches, res
 
     def _covariance(self, number_of_pitches, results):
         """
