@@ -39,10 +39,10 @@ class EspnCrawler:
                     game_id = str(links).split('gameId=')[1].split('"')[0]
                     game_id_list.append(game_id)
             row = str(row)
-        return game_id_list\
-    
-    # make url as string
-    def url_parser(self, url):
+        return game_id_list
+
+    @staticmethod
+    def url_parser(url):
         urldata = urlopen(url)
         # this encoding should be checked automatically
         data = urldata.read()
@@ -81,10 +81,11 @@ class EspnCrawler:
                 for column in data:
                     column = str(column)
                     parsed_column = column.split('<')
-                    real_data = ""
+                    real_data = []
                     for elm in parsed_column:
                         if not elm.endswith('>') and elm != '':
-                            real_data += elm.split('>')[1]
+                            # real_data += elm.split('>')[1]
+                            real_data.append(elm.split('>')[1])
                     row.append(real_data)
                 inn.append(row)
             html_return.append(inn)

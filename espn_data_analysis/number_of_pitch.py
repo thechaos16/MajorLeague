@@ -21,9 +21,6 @@ class NumberOfPitch:
             for one_inning in one_game:
                 for one_at_bat in one_inning:
                     number_of_pitches, result = self._pitch_counter_and_result(one_at_bat[1])
-                    print(one_at_bat)
-                    print(number_of_pitches)
-                    print(result)
                     if number_of_pitches in self.mined_data:
                         if result in self.mined_data[number_of_pitches]:
                             self.mined_data[number_of_pitches][result] += 1
@@ -32,11 +29,16 @@ class NumberOfPitch:
                     else:
                         self.mined_data[number_of_pitches] = {result: 1}
 
-    def _pitch_counter_and_result(self, one_batter):
-        # FIXME: this parser only valid when there is no runners
-        events = one_batter.split(',')
-        number_of_pitches = len(events)
-        result = events[-1]
+    @staticmethod
+    def _pitch_counter_and_result(one_batter):
+        # hit first pitch
+        if len(one_batter) == 1:
+            number_of_pitches = 1
+            result = one_batter
+        else:
+            pitches = one_batter[0].split(',')
+            number_of_pitches = len(pitches)
+            result = one_batter[1]
         res = 'O'
         if 'struck' in result:
             res = 'SO'
