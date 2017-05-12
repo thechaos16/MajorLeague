@@ -21,6 +21,9 @@ class NumberOfPitch:
             for one_inning in one_game:
                 for one_at_bat in one_inning:
                     number_of_pitches, result = self._pitch_counter_and_result(one_at_bat[1])
+                    # reliever in the beginning of an inning
+                    if number_of_pitches == 0:
+                        continue
                     if number_of_pitches in self.mined_data:
                         if result in self.mined_data[number_of_pitches]:
                             self.mined_data[number_of_pitches][result] += 1
@@ -33,8 +36,20 @@ class NumberOfPitch:
     def _pitch_counter_and_result(one_batter):
         # hit first pitch
         if len(one_batter) == 1:
+            # reliever
+            if 'relieved' in one_batter[0]:
+                return 0, None
+            # pinch fielder
+            if ' in ' in one_batter[0]:
+                return 0, None
+            # pinch hitter
+            if 'hit for' in one_batter[0]:
+                return 0, None
+            # pick off
+            if 'picked off' in one_batter[0]:
+                return 0, None
             number_of_pitches = 1
-            result = one_batter
+            result = one_batter[0]
         else:
             pitches = one_batter[0].split(',')
             number_of_pitches = len(pitches)
@@ -45,15 +60,16 @@ class NumberOfPitch:
             number_of_pitches -= 1
         elif 'hit' in result:
             res = 'HBP'
-            number_of_pitches -= 1
-        elif 'single' in result:
+            # FIXME: it should be clarified if hit-by-pitched-ball counts as a ball
+            # number_of_pitches -= 1
+        elif 'singled' in result:
             res = 'H'
         elif 'walk' in result:
             res = 'BB'
             number_of_pitches -= 1
-        elif 'double' in result:
+        elif 'doubled' in result:  # NOTE: use 'doubled' because 'double play' can be interpreted as 'double'
             res = 'D'
-        elif 'triple' in result:
+        elif 'tripled' in result:
             res = 'T'
         elif 'homerun' in result or 'homer' in result:
             res = 'HR'
