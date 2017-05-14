@@ -10,27 +10,60 @@ class NumberOfPitch:
         self.interval = interval
         self.crawler = EspnCrawler(self.interval)
         self.game_list = None
+        self.game_id_list = None
         self.mined_data = dict()
 
+    def run(self):
+        if len(self.crawler.interval) <= 10:
+            self._data_preparation()
+        else:
+            self.game_id_list = self._data_preparateion_game_by_game()
+        self._data_miner()
+
     def _data_preparation(self):
-        # FIXME: what if interval is too big to fit in memory?
         self.game_list = self.crawler.run(game_type="pitch-by-pitch")
 
+    def _data_preparateion_game_by_game(self):
+        # game-by-game version in case that there are too many games
+        game_id_list = []
+        for date in self.crawler.interval:
+            game_id_list += self.crawler.schedule_parser(date)
+        return game_id_list
+
     def _data_miner(self):
-        for one_game in self.game_list:
-            for one_inning in one_game:
-                for one_at_bat in one_inning:
-                    number_of_pitches, result = self._pitch_counter_and_result(one_at_bat[1])
-                    # reliever in the beginning of an inning
-                    if number_of_pitches == 0:
-                        continue
-                    if number_of_pitches in self.mined_data:
-                        if result in self.mined_data[number_of_pitches]:
-                            self.mined_data[number_of_pitches][result] += 1
+        if self.game_list is not None:
+            for one_game in self.game_list:
+                for one_inning in one_game:
+                    for one_at_bat in one_inning:
+                        number_of_pitches, result = self._pitch_counter_and_result(one_at_bat[1])
+                        # reliever in the beginning of an inning
+                        if number_of_pitches == 0:
+                            continue
+                        if number_of_pitches in self.mined_data:
+                            if result in self.mined_data[number_of_pitches]:
+                                self.mined_data[number_of_pitches][result] += 1
+                            else:
+                                self.mined_data[number_of_pitches][result] = 1
                         else:
-                            self.mined_data[number_of_pitches][result] = 1
-                    else:
-                        self.mined_data[number_of_pitches] = {result: 1}
+                            self.mined_data[number_of_pitches] = {result: 1}
+        else:
+            if self.game_id_list is None:
+                raise NotImplementedError("Either game id and game id list should not be None")
+            for game in self.game_id_list:
+                one_game = self.crawler.pitch_by_pitch_parser(game)
+                for one_inning in one_game:
+                    for one_at_bat in one_inning:
+                        number_of_pitches, result = self._pitch_counter_and_result(one_at_bat[1])
+                        # reliever in the beginning of an inning
+                        if number_of_pitches == 0:
+                            continue
+                        if number_of_pitches in self.mined_data:
+                            if result in self.mined_data[number_of_pitches]:
+                                self.mined_data[number_of_pitches][result] += 1
+                            else:
+                                self.mined_data[number_of_pitches][result] = 1
+                        else:
+                            self.mined_data[number_of_pitches] = {result: 1}
 
     @staticmethod
     def _pitch_counter_and_result(one_batter):
